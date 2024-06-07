@@ -11,11 +11,13 @@ int main(){
    int resposta[10];
    int resposta_certa[10];
    char teste_jogo[7]="";
-   char operacao;
+   char op;
+   char operacoes[5]="+-*/";
+   int operacao;
    int true = 1;
    int tentativas = 1;
    
-//funçao randomica para ser selecionado 10 numeros inteiros aleatorios
+//funçao randomica para ser selecionado os numeros inteiros aleatorios da primeira questao
    for(int i = 0; i<4;i++){
       num[i]= rand ()% 101;
    }
@@ -23,40 +25,51 @@ int main(){
    //primeiro laço que eu acredito ser o laço q vai ficar como laço principal
 while(true==1){
 printf("voce quer jogar o jogo digite sim ou nao\n");
+getchar();
 fgets(teste_jogo,7,stdin);
 //teste para caso a pessoa queira sair.
-if(!strcmp(teste_jogo,"sim")!=1){
-   true = 0;
+if(!strcmp(teste_jogo,"sim")!=0){
+   break;
 }
 // laço para realizar as equacoes do primeiro nivel de forma que as operações sejam de forma randomica
 for(int i = 0; i<4;i++){
-   operacao = operacao[rand()%4];
+   operacao = (rand() % 4 )+ 1;
    switch (operacao)
    {
-   case '+':
+   case '1':
       resposta_certa[i] = num[i] + num[i+1];
+      op = operacoes[0];
+      printf("aaaaaaaaaaaaaaaaaaaaaaaaa\n");
       break;
    
-   case '-':
+   case '2':
       resposta_certa[i] = num[i] - num[i+1];
+      op = operacoes[1];
+      printf("bbbbbbbbbbbbbbbbbbbbbbb\n");
       break;
-   case '*':
+   case '3':
       resposta_certa[i] = num[i] * num[i+1];
+      op = operacoes[2];
+      printf("cccccccccccccccccccccccc\n");
       break;
-   case '/':
+   case '4':
       resposta_certa[i] = num[i] / num[i+1];
-
+      op = operacoes[3];
+      printf("dddddddddddddddddddddddddd\n");
+      break;
    default:
       break;
    }
    while(tentativas==1){
-   printf(" diga o resultado da equação %d %c %d ",num[i],operacao,num[i+1]);
+   printf(" diga o resultado da equacao %d",num[i]);
+   printf("%c",op);
+   printf("%d\n",num[i+1]);
    scanf("%d",&resposta[i]);
    if(resposta[i]==resposta_certa[i]){
       printf("voce acertou\n");
       tentativas = 0;
    }else{
-      printf("voce errou\n");
+      printf("voce errou tente de novo\n");
    }
    }
 }
