@@ -1,13 +1,26 @@
 #include <stdio.h>
 
 // Funções para cada nível de dificuldade
-void nivelFacil(int *vidas);
-void nivelMedio(int *vidas);
-void nivelDificil(int *vidas);
+void nivelFacil(int *vidas) {
+
+
+
+}
+void nivelMedio(int *vidas) {
+
+
+
+}
+void nivelDificil(int *vidas) {
+
+
+
+}
 
 // Função principal
 int main() {
-    int opcao;
+    char opcaojogo[50];
+    
     int vidas = 3;
 
     printf("*************************************\n");
@@ -15,12 +28,14 @@ int main() {
     printf("*************************************\n");
     printf("1. Iniciar Jogo\n");
     printf("2. Sair\n");
-    printf("Escolha uma opcao: ");
+    printf("Escolha uma opcao: \n");
     scanf("%d", &opcao);
 
     if (opcao == 1) {
+
         nivelFacil(&vidas);
     } else {
+
         printf("Saindo do jogo...\n");
     }
 

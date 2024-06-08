@@ -1,16 +1,23 @@
 #include <stdio.h>
-#include </include/conio.h>
+#include <conio.h>
+#include <windows.h>
+
+void textcolor (int color)
+{
+    /*(DEFINIÇÃO DA COR DO TEXTO) HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, color);*/
+}
 
 void exibirMenu(int opcao) {
-    char *opcoes[] = {"Opção 1", "Opção 2", "Opção 3", "Sair"};
+    char *opcoes[] = {"Opcao 1", "Opcao 2", "Opcao 3", "Sair"};
     int numOpcoes = sizeof(opcoes) / sizeof(char *);
 
     printf("\n\nMenu:\n");
     for (int i = 0; i < numOpcoes; i++) {
         if (i == opcao) {
-            textcolor(RED);
-            cprintf("%s\n", opcoes[i]);
-            textcolor(WHITE);
+            textcolor(12); // 12 é o código para vermelho
+            printf("%s\n", opcoes[i]);
+            textcolor(7); // 7 é o código para branco
         } else {
             printf("%s\n", opcoes[i]);
         }
@@ -22,7 +29,7 @@ int main() {
     int tecla;
 
     do {
-        clrscr();
+        system("cls"); // Use 'system("cls")' para limpar a tela
         exibirMenu(opcao);
 
         tecla = getch();

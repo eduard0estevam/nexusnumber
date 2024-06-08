@@ -3,7 +3,7 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
-#include <conio.h>
+#include <windows.h>
 //funções para definir o nível de dificuldade do jogo//exemplo//
 void nivelfacil(int *vidas);
 void nivelmedio(int *vidas);
@@ -20,6 +20,8 @@ int main(){
    int resposta_certa[10];
    char teste_jogo[7]="";
    char op;
+   char opcao_jogo[50];
+   int opcao_jjogo;
    char operacoes[5]="+-*/";
    int operacao;
    int true = 1;
@@ -37,11 +39,15 @@ while(true==1){
       printf("*************************************\n");
       printf("1. Iniciar Jogo\n");
       printf("2. Sair");
-getchar();
-fgets(teste_jogo,7,stdin);
+            getchar();
+      fgets(opcao_jogo,50,stdin);
+
+      opcao_jogo[strcspn(opcao_jogo, "\n")] = 0;
+
 //teste para caso a pessoa queira sair.
-if(!strcmp(teste_jogo,"sim")!=0){
-   break;
+if(strcmp(opcao_jogo,"1")){
+   
+   
 }
 // laço para realizar as equacoes do primeiro nivel de forma que as operações sejam de forma randomica
 for(int i = 0; i<4;i++){
