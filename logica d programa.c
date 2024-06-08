@@ -3,6 +3,14 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
+#include <conio.h>
+//funções para definir o nível de dificuldade do jogo//exemplo//
+void nivelfacil(int *vidas);
+void nivelmedio(int *vidas);
+void niveldificil(int *vidas);
+/*aqui, a função void nao vai retornar nada, e vai definir a quantidade de vidas por niveis. a quantida de vidas eh, por exemplo, 4.
+se errar uma questao, fica vida--, e essa subtração da vida se da pelo uso do ponteiro, que vai diretamente
+localizar o numero de vidas e decrementar*/
 int main(){
 //funçao que inicia a semente da randomização
    srand(time(NULL));
@@ -24,7 +32,11 @@ int main(){
 
    //primeiro laço que eu acredito ser o laço q vai ficar como laço principal
 while(true==1){
-printf("voce quer jogar o jogo digite sim ou nao\n");
+      printf("*************************************\n");
+      printf("*           Nexus Number            *\n");
+      printf("*************************************\n");
+      printf("1. Iniciar Jogo\n");
+      printf("2. Sair");
 getchar();
 fgets(teste_jogo,7,stdin);
 //teste para caso a pessoa queira sair.
