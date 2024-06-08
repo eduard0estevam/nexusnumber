@@ -5,9 +5,63 @@
 #include <time.h>
 #include <windows.h>
 //funções para definir o nível de dificuldade do jogo//exemplo//
-void nivelfacil(int *vidas);
-void nivelmedio(int *vidas);
-void niveldificil(int *vidas);
+
+void nivelfacil(int *vidas); {
+
+   int respostacorreta = 64;
+    char valor_resposta[55];
+
+    printf("Quanto eh 54 + 10?\n");
+
+    fgets(valor_resposta, 55, stdin);
+
+    int resposta = atoi(valor_resposta);
+
+    if(resposta == respostacorreta) {
+        printf("Resposta Correta\n");
+    } else {
+        printf("Resposta Errada! Voce perdeu uma vida.\n");
+        (*vidas)--;
+    }
+
+}
+void nivelmedio(int *vidas) {
+
+    int respostacorreta = 205;
+    char valor_resposta[55];
+
+    printf("Quanto eh (40 *4) + (10 - 5 * 2) + 45 ?\n");
+
+    fgets(valor_resposta, 55, stdin);
+
+    int resposta = atoi(valor_resposta);
+
+    if(resposta == respostacorreta) {
+        printf("Resposta Correta\n");
+    } else {
+        printf("Resposta Errada! Voce perdeu uma vida.\n");
+        (*vidas)--;
+    }
+}
+void niveldificil(int *vidas) {
+
+int respostacorreta = 1; 
+    char valor_resposta[55];
+
+    printf("Calcule f(x) = 1 / (x^2 + x)\n");
+
+    fgets(valor_resposta, 55, stdin);
+
+    int resposta = atoi(valor_resposta);
+
+    if(resposta == respostacorreta) {
+        printf("Resposta Correta\n");
+    } else {
+        printf("Resposta Errada! Você perdeu uma vida.\n");
+        (*vidas)--;
+    }
+    
+   }
 /*aqui, a função void nao vai retornar nada, e vai definir a quantidade de vidas por niveis. a quantida de vidas eh, por exemplo, 4.
 se errar uma questao, fica vida--, e essa subtração da vida se da pelo uso do ponteiro, que vai diretamente
 localizar o numero de vidas e decrementar*/
