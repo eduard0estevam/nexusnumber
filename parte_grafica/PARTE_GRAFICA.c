@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <conio.h>
+#include </include/conio.h>
 
 void exibirMenu(int opcao) {
     char *opcoes[] = {"Opção 1", "Opção 2", "Opção 3", "Sair"};
