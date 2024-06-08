@@ -5,7 +5,7 @@
 #include <time.h>
 #include <windows.h>
 //funções para definir o nível de dificuldade do jogo//exemplo//
-
+/*o uso do ponteiro sera atribuido ao numero de vidas*/
 void nivelfacil(int *vidas); {
 
    int respostacorreta = 64;
@@ -45,7 +45,7 @@ void nivelmedio(int *vidas) {
 }
 void niveldificil(int *vidas) {
 
-int respostacorreta = 1; 
+    int respostacorreta = 1; 
     char valor_resposta[55];
 
     printf("Calcule f(x) = 1 / (x^2 + x)\n");
@@ -60,7 +60,7 @@ int respostacorreta = 1;
         printf("Resposta Errada! Você perdeu uma vida.\n");
         (*vidas)--;
     }
-    
+
    }
 /*aqui, a função void nao vai retornar nada, e vai definir a quantidade de vidas por niveis. a quantida de vidas eh, por exemplo, 4.
 se errar uma questao, fica vida--, e essa subtração da vida se da pelo uso do ponteiro, que vai diretamente
@@ -79,7 +79,8 @@ int main(){
    char operacoes[5]="+-*/";
    int operacao;
    int true = 1;
-   int tentativas = 1;
+   int tentativas = 1
+   int vidas = 4;
    
 //funçao randomica para ser selecionado os numeros inteiros aleatorios da primeira questao
    for(int i = 0; i<4;i++){
