@@ -4,29 +4,27 @@
 #include <math.h>
 #include <time.h>
 #include <windows.h>
-//funções para definir o nível de dificuldade do jogo//exemplo//
-/*o uso do ponteiro sera atribuido ao numero de vidas*/
-void nivelfacil(int *vidas); {
 
-   int respostacorreta = 64;
-    char valor_resposta[55];
+void nivelfacil(int *vidas) {
+   if(operacoes == '+')
+   for(int contador = 0; contador < 4; contador++) {
 
-    printf("Quanto eh 54 + 10?\n");
-
-    fgets(valor_resposta, 55, stdin);
-
-    int resposta = atoi(valor_resposta);
-
-    if(resposta == respostacorreta) {
-        printf("Resposta Correta\n");
-    } else {
-        printf("Resposta Errada! Voce perdeu uma vida.\n");
-        (*vidas)--;
+    resposta_certa[i] = num[i] + num[i+1];
+                op = operacoes[0]; {
+      
+    } if else(operacoes == '-') {
+         resposta_certa[i] = num[i] - num[i+1];
+                op = operacoes[1];
+    } else if(operacoes == '*') {
+       resposta_certa[i] = num[i] * num[i+1];
+                op = operacoes[2];
+    } else if(operacoes == '/') { 
+      resposta_certa[i] = num[i] / num[i+1];
+                op = operacoes[3];
     }
 
-}
+   }
 void nivelmedio(int *vidas) {
-
     int respostacorreta = 205;
     char valor_resposta[55];
 
@@ -43,8 +41,8 @@ void nivelmedio(int *vidas) {
         (*vidas)--;
     }
 }
-void niveldificil(int *vidas) {
 
+void niveldificil(int *vidas) {
     int respostacorreta = 1; 
     char valor_resposta[55];
 
@@ -60,92 +58,60 @@ void niveldificil(int *vidas) {
         printf("Resposta Errada! Você perdeu uma vida.\n");
         (*vidas)--;
     }
+}
 
-   }
-/*aqui, a função void nao vai retornar nada, e vai definir a quantidade de vidas por niveis. a quantida de vidas eh, por exemplo, 4.
-se errar uma questao, fica vida--, e essa subtração da vida se da pelo uso do ponteiro, que vai diretamente
-localizar o numero de vidas e decrementar*/
 int main(){
-//funçao que inicia a semente da randomização
-   srand(time(NULL));
-// atribui as variaves que serão necessarias
-   int num[20];
-   int resposta[10];
-   int resposta_certa[10];
-   char teste_jogo[7]="";
-   char op;
-   char opcao_jogo[50];
-   int opcao_jjogo;
-   char operacoes[5]="+-*/";
-   int operacao;
-   int true = 1;
-   int tentativas = 1
-   int vidas = 4;
-   
-//funçao randomica para ser selecionado os numeros inteiros aleatorios da primeira questao
-   for(int i = 0; i<4;i++){
-      num[i]= rand ()% 101;
-   }
+   //comando para a geração de códigos aleatórios
+    srand(time(NULL));
+    int num[20];
+    int resposta[10];
+    int resposta_certa[10];
+    //verificação das opções dadas e a seleção da dificuldade de jogo
+    char op;
+    int opcao_jogo;
+    int dificuldade_jogo;
+    char operacoes[5]="+-*/";
+    int operacao;
+    int true = 1;
+    int tentativas = 1;
+    int vidas = 4;
 
-   //primeiro laço que eu acredito ser o laço q vai ficar como laço principal
-while(true==1){
-      printf("*************************************\n");
-      printf("*           Nexus Number            *\n");
-      printf("*************************************\n");
-      printf("1. Iniciar Jogo\n");
-      printf("2. Sair");
-            getchar();
-      fgets(opcao_jogo,50,stdin);
+    for(int i = 0; i<4; i++){
+        num[i]= rand ()% 101;
+    }
 
-      opcao_jogo[strcspn(opcao_jogo, "\n")] = 0;
+        printf("*************************************\n");
+        printf("*           Nexus Number            *\n");
+        printf("*************************************\n");
+        printf("1. Iniciar Jogo\n");
+        printf("2. Sair\n");
+        getchar();
+        fgets(opcao_jogo,50,stdin);
 
-//teste para caso a pessoa queira sair.
-if(strcmp(opcao_jogo,"1")){
-   
-   
-}
-// laço para realizar as equacoes do primeiro nivel de forma que as operações sejam de forma randomica
-for(int i = 0; i<4;i++){
-   operacao = (rand() % 4 )+ 1;
-   switch (operacao)
-   {
-   case '1':
-      resposta_certa[i] = num[i] + num[i+1];
-      op = operacoes[0];
-      printf("aaaaaaaaaaaaaaaaaaaaaaaaa\n");
-      break;
-   
-   case '2':
-      resposta_certa[i] = num[i] - num[i+1];
-      op = operacoes[1];
-      printf("bbbbbbbbbbbbbbbbbbbbbbb\n");
-      break;
-   case '3':
-      resposta_certa[i] = num[i] * num[i+1];
-      op = operacoes[2];
-      printf("cccccccccccccccccccccccc\n");
-      break;
-   case '4':
-      resposta_certa[i] = num[i] / num[i+1];
-      op = operacoes[3];
-      printf("dddddddddddddddddddddddddd\n");
-      break;
-   default:
-      break;
-   }
-   while(tentativas==1){
-   printf(" diga o resultado da equacao %d",num[i]);
-   printf("%c",op);
-   printf("%d\n",num[i+1]);
-   scanf("%d",&resposta[i]);
-   if(resposta[i]==resposta_certa[i]){
-      printf("voce acertou\n");
-      tentativas = 0;
-   }else{
-      printf("voce errou tente de novo\n");
-   }
-   }
-}
-}
- return 0;
+        opcao_jogo[strcspn(opcao_jogo, "\n")] = 0;
+
+        if(strcmp(opcao_jogo,"2") == 0){
+            break;
+
+            if(opcao_jogo == '1') {
+               printf("Insira a dificuldade do jogo:\n");
+               printf("1. Facil\n");
+               printf("2. Medio\n");
+               printf("3. Dificil\n");
+               scanf("%d", dificuldade_jogo);
+                if("dificuldade ")
+                printf(" diga o resultado da equacao %d",num[i]);
+                printf("%c",op);
+                printf("%d\n",num[i+1]);
+                scanf("%d",&resposta[i]);
+                if(resposta[i]==resposta_certa[i]){
+                    printf("voce acertou\n");
+                    tentativas = 0;
+                }else{
+                    printf("voce errou tente de novo\n");
+                }
+            }
+        }
+    }
+    return 0;
 }
