@@ -99,7 +99,13 @@ int main(){
                printf("2. Medio\n");
                printf("3. Dificil\n");
                scanf("%d", dificuldade_jogo);
-                if("dificuldade ")
+                if("dificuldade == 1") {
+                  do
+                  {
+                     /* code */
+                  } while (/* condition */);
+                  
+                }
                 printf(" diga o resultado da equacao %d",num[i]);
                 printf("%c",op);
                 printf("%d\n",num[i+1]);
