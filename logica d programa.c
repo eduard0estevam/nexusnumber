@@ -4,115 +4,118 @@
 #include <math.h>
 #include <time.h>
 #include <windows.h>
+// variaveis globais 
+    int vidas = 3;
+   int num[20];
+   int resposta[10];
+   int resposta_certa[10];
+   char teste_jogo[7]="";
+   char op;
+   int operacao;
+   int true = 1;
+   int tentativas = 1;
+   int dificuldade_jogo;
 
-void nivelfacil(int *vidas) {
-    int num[4];
-    int resposta_certa[4];
-    char operacoes[4] = {'+', '-', '*', '/'};
-    char op;
-
-    // Geração de números aleatórios
-    for(int i = 0; i < 4; i++){
-        num[i] = rand() % 101;
-    }
-
-    // Realização das operações
-    for(int i = 0; i < 3; i++) {
-        if(operacoes[i] == '+') {
+// struct para o primeiro nivel 
+void nivelfacil(int *vidas){
+//funçao randomica para ser selecionado os numeros inteiros aleatorios da primeira questao
+   for(int i = 0; i<4;i++){
+      num[i]= (rand ()% 50)+1;
+   }
+   
+// Realização das operações do primeiro nivel 
+    for(int i = 0; i < 2; i++) {
+// função que vai escolher aleatoriamente qual calculo será realizado 
+        operacao = (rand() % 4 )+ 1;
+// teste que vai fazer o calculo escolhido
+        if(operacao == 1){
             resposta_certa[i] = num[i] + num[i+1];
-            op = operacoes[i];
-        } else if(operacoes[i] == '-') {
+            printf("aaaaaaaaaaaaaaaaaaaaaaaaa\n");
+            op = '+';
+            // laço para tentativas de acerto do jogador 
+            while(vidas!=0){
+                printf(" diga o resultado da equacao %d %c %d\n",num[i],op,num[i+1]);
+                 scanf("%d",&resposta[i]);
+                    if(resposta[i]==resposta_certa[i]){
+                        printf("voce acertou\n");
+                        break;
+                    }else{
+                        printf("voce errou tente de novo\n");
+                        vidas--;
+                    }
+            }
+        }else if(operacao == 2) {
             resposta_certa[i] = num[i] - num[i+1];
-            op = operacoes[i];
-        } else if(operacoes[i] == '*') {
+            op = '-';
+           while(vidas!=0){
+                printf(" diga o resultado da equacao %d %c %d\n",num[i],op,num[i+1]);
+                 scanf("%d",&resposta[i]);
+                    if(resposta[i]==resposta_certa[i]){
+                        printf("voce acertou\n");
+                        break;
+                    }else{
+                        printf("voce errou tente de novo\n");
+                        vidas--;
+                    }
+            }
+        }else if(operacao == 3) {
             resposta_certa[i] = num[i] * num[i+1];
-            op = operacoes[i];
-        } else if(operacoes[i] == '/') { 
-            resposta_certa[i] = num[i] / num[i+1];
-            op = operacoes[i];
+            op = '*';
+            while(vidas!=0){
+                printf(" diga o resultado da equacao %d %c %d\n",num[i],op,num[i+1]);
+                 scanf("%d",&resposta[i]);
+                    if(resposta[i]==resposta_certa[i]){
+                        printf("voce acertou\n");
+                        break;
+                    }else{
+                        printf("voce errou tente de novo\n");
+                        vidas--;
+                    }
         }
-    }
-    
-    }
-
-void nivelmedio(int *vidas) {
-    i
+        }else if(operacao == 4) { 
+            resposta_certa[i] = num[i] / num[i+1];
+            op = '/';
+            while(vidas!=0){
+                printf(" diga o resultado da equacao %d %c %d\n",num[i],op,num[i+1]);
+                 scanf("%d",&resposta[i]);
+                    if(resposta[i]==resposta_certa[i]){
+                        printf("voce acertou\n");
+                        break;
+                    }else{
+                        printf("voce errou tente de novo\n");
+                        vidas--;
+                    }
+            }
+        }
 }
-
-void niveldificil(int *vidas) {
-    int respostacorreta = 1; 
-    char valor_resposta[55];
-
-    printf("Calcule f(x) = 1 / (x^2 + x)\n");
-
-    fgets(valor_resposta, 55, stdin);
-
-    int resposta = atoi(valor_resposta);
-
-    if(resposta == respostacorreta) {
-        printf("Resposta Correta\n");
-    } else {
-        printf("Resposta Errada! Você perdeu uma vida.\n");
-        (*vidas)--;
-    }
 }
 
 int main(){
-   //comando para a geração de códigos aleatórios
+    int true;
     srand(time(NULL));
-    int num[20];
-    int resposta[10];
-    int resposta_certa[10];
-    //verificação das opções dadas e a seleção da dificuldade de jogo
-    char op;
-    int opcao_jogo;
-    int dificuldade_jogo;
-    char operacoes[5]="+-*/";
-    int operacao;
-    int true = 1;
-    int tentativas = 1;
-    int vidas = 4;
-
-   
-
+    while(1){
         printf("*************************************\n");
         printf("*           Nexus Number            *\n");
         printf("*************************************\n");
         printf("1. Iniciar Jogo\n");
         printf("2. Sair\n");
-        getchar();
-        fgets(opcao_jogo,50,stdin);
+       scanf("%d",&true);
 
-        opcao_jogo[strcspn(opcao_jogo, "\n")] = 0;
-
-        if(strcmp(opcao_jogo,"2") == 0){
+        if(true == 2){
             break;
-
-            if(opcao_jogo == '1') {
+        }
+        if( true == 1) {
                printf("Insira a dificuldade do jogo:\n");
                printf("1. Facil\n");
                printf("2. Medio\n");
                printf("3. Dificil\n");
-               scanf("%d", dificuldade_jogo);
-                if("dificuldade == 1") {
-                  do
-                  {
-                     /* code */
-                  } while (/* condition */);
-                  
-                }
-                printf(" diga o resultado da equacao %d",num[i]);
-                printf("%c",op);
-                printf("%d\n",num[i+1]);
-                scanf("%d",&resposta[i]);
-                if(resposta[i]==resposta_certa[i]){
-                    printf("voce acertou\n");
-                    tentativas = 0;
-                }else{
-                    printf("voce errou tente de novo\n");
+               scanf("%d", &dificuldade_jogo);
+                if(dificuldade_jogo == 1) {
+                    nivelfacil(&vidas);
                 }
             }
         }
+   return 0;
     }
-    return 0;
-}
+     
+    
