@@ -6,6 +6,10 @@
 #include <windows.h>
 
 void nivelfacil(int *vidas) {
+     for(int i = 0; i<4; i++){
+        
+        //random de numeros
+        num[]= rand ()% 101;
    if(operacoes == '+')
    for(int contador = 0; contador < 4; contador++) {
 
@@ -24,22 +28,9 @@ void nivelfacil(int *vidas) {
     }
 
    }
+      }
 void nivelmedio(int *vidas) {
-    int respostacorreta = 205;
-    char valor_resposta[55];
-
-    printf("Quanto eh (40 *4) + (10 - 5 * 2) + 45 ?\n");
-
-    fgets(valor_resposta, 55, stdin);
-
-    int resposta = atoi(valor_resposta);
-
-    if(resposta == respostacorreta) {
-        printf("Resposta Correta\n");
-    } else {
-        printf("Resposta Errada! Voce perdeu uma vida.\n");
-        (*vidas)--;
-    }
+    i
 }
 
 void niveldificil(int *vidas) {
@@ -76,9 +67,7 @@ int main(){
     int tentativas = 1;
     int vidas = 4;
 
-    for(int i = 0; i<4; i++){
-        num[i]= rand ()% 101;
-    }
+   
 
         printf("*************************************\n");
         printf("*           Nexus Number            *\n");
