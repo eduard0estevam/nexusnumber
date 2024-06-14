@@ -6,29 +6,35 @@
 #include <windows.h>
 
 void nivelfacil(int *vidas) {
-     for(int i = 0; i<4; i++){
-        
-        //random de numeros
-        num[]= rand ()% 101;
-   if(operacoes == '+')
-   for(int contador = 0; contador < 4; contador++) {
+    int num[4];
+    int resposta_certa[4];
+    char operacoes[4] = {'+', '-', '*', '/'};
+    char op;
 
-    resposta_certa[i] = num[i] + num[i+1];
-                op = operacoes[0]; {
-      
-    } if else(operacoes == '-') {
-         resposta_certa[i] = num[i] - num[i+1];
-                op = operacoes[1];
-    } else if(operacoes == '*') {
-       resposta_certa[i] = num[i] * num[i+1];
-                op = operacoes[2];
-    } else if(operacoes == '/') { 
-      resposta_certa[i] = num[i] / num[i+1];
-                op = operacoes[3];
+    // Geração de números aleatórios
+    for(int i = 0; i < 4; i++){
+        num[i] = rand() % 101;
     }
 
-   }
-      }
+    // Realização das operações
+    for(int i = 0; i < 3; i++) {
+        if(operacoes[i] == '+') {
+            resposta_certa[i] = num[i] + num[i+1];
+            op = operacoes[i];
+        } else if(operacoes[i] == '-') {
+            resposta_certa[i] = num[i] - num[i+1];
+            op = operacoes[i];
+        } else if(operacoes[i] == '*') {
+            resposta_certa[i] = num[i] * num[i+1];
+            op = operacoes[i];
+        } else if(operacoes[i] == '/') { 
+            resposta_certa[i] = num[i] / num[i+1];
+            op = operacoes[i];
+        }
+    }
+    
+    }
+
 void nivelmedio(int *vidas) {
     i
 }
