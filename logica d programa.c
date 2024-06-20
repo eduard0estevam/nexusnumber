@@ -3,7 +3,6 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
-#include <windows.h>
 // variaveis globais 
     int vidas = 3;
    int num[20];
