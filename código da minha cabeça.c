@@ -7,8 +7,8 @@
 #include <conio.h>
 
 
-// gnt eu me perdi no codigo de eduardo ai to fazendo pela organização da minha cabeça mas seguindo a mesma logica qlqr coisa se ficar ruim a gnt finge q nunca
-// foi feito bjsssss
+// gnt to reorganizando/reformulando o codigo de acordo com a minha cabeça pq me perdi um pouco, mas seguindo a mesma logica. se n der certo a gnt finge q 
+//nunca existiu
 
 int main(){
 
