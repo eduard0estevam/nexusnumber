@@ -6,20 +6,22 @@
 #include <windows.h>
 #include <conio.h>
 
-
-// gnt to reorganizando/reformulando o codigo de acordo com a minha cabeça pq me perdi um pouco, mas seguindo a mesma logica. se n der certo a gnt finge q 
-//nunca existiu
-
 int main(){
 
     char escolhaMenu; 
+    char nivelDoJogo;
+    
 
         printf("\n\n\n\n                                                      Nexus Number    \n\n\n\n\n\n\n");
         printf("                                                   1 - Iniciar Jogo    \n\n");
         printf("                                                       2 - Sair\n");
         
-        escolhaMenu = getch(); //Lê um caractére sem aparecer na tela e sem precisar dar enter.
+        
 
+    while(1){
+
+        escolhaMenu = getch(); //Lê um caractére sem aparecer na tela e sem precisar dar enter.
+        
         if(escolhaMenu == '1'){
              system("cls"); // Limpa a tela antes de imprimir a próxima frase.
              printf("\n\n\n\n                                                  Bem-vindo ao Nexus Number!\n\n");
@@ -31,13 +33,29 @@ int main(){
              printf("                                                       1 - Facil\n\n");
              printf("                                                       2 - Medio\n\n");
              printf("                                                       3 - Dificil\n\n");
+             nivelDoJogo = getch();
+            
+            if(nivelDoJogo == '1'){
+                printf("Teste.\n");
+            }else if(nivelDoJogo == '2'){
+                printf("Teste 2.\n");
+            }else if(nivelDoJogo == '3'){
+                printf("Teste 3.\n");
+            }else {
+                //Nada acontece.
+            }
 
+             
 
         } else if(escolhaMenu == '2'){
             exit(0);
-        } else {}
+        
+        } else {
+           //Nada acontece caso a escolha não seja 1 ou 2.          
+        }
+    }
 
-        //eu nao sei pq essa desgraça tá encerrando qnd bota alguma coisa q n seja 1 ou 2
+       
     
     return 0;
 }
