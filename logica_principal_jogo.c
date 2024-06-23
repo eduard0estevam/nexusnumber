@@ -33,8 +33,7 @@ void nivelmedio(int *vidas);
 void niveldificil(int *vidas);
 void trocar(Questao *a, Questao *b);
 void embaralhar(Questao questoes[], int n);
-void imprimirMatriz(int matriz[4][4]);
-int validarMatriz(int matriz[4][4], int resposta[4][4]);
+void nivelPerguntas(int *vidas, Questao questoes[], int total_questoes);
 
 int main() {
     char escolhaMenu;
@@ -115,30 +114,6 @@ void embaralhar(Questao questoes[], int n) {
     }
 }
 
-void imprimirMatriz(int matriz[4][4]) {
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            if (matriz[i][j] == -1) {
-                printf("? ");
-            } else {
-                printf("%d ", matriz[i][j]);
-            }
-        }
-        printf("\n");
-    }
-}
-
-int validarMatriz(int matriz[4][4], int resposta[4][4]) {
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            if (matriz[i][j] != -1 && matriz[i][j] != resposta[i][j]) {
-                return 0; // Resposta errada
-            }
-        }
-    }
-    return 1; // Resposta correta
-}
-
 void nivelPerguntas(int *vidas, Questao questoes[], int total_questoes) {
     srand(time(NULL));
     embaralhar(questoes, total_questoes);
@@ -148,56 +123,20 @@ void nivelPerguntas(int *vidas, Questao questoes[], int total_questoes) {
 
         while (!correta) {
             limparTela();
+            char resposta[256];
+            printf("%s\n", questoes[i].pergunta);
+            printf("Sua resposta: ");
+            scanf("%s", resposta);
 
-            if (i == 4) { // Questão da matriz
-                int matriz[4][4] = {
-                    {2, 1, 0, 0},
-                    {4, 1, 1, 1},
-                    {6, 1, 0, 2},
-                    {-1, -1, -1, -1}
-                };
-
-                int resposta[4][4] = {
-                    {2, 1, 0, 0},
-                    {4, 1, 1, 1},
-                    {6, 1, 0, 2},
-                    {0, 0, 0, 0}
-                };
-
-                printf("%s\n", questoes[i].pergunta);
-                imprimirMatriz(matriz);
-
-                char linha[256];
-                printf("Preencha a linha 3 (separados por espaço): ");
-                fgets(linha, sizeof(linha), stdin);
-
-                if (sscanf(linha, "%d %d %d %d", &resposta[3][0], &resposta[3][1], &resposta[3][2], &resposta[3][3]) == 4) {
-                    if (validarMatriz(matriz, resposta)) {
-                        printf("Correto!\n");
-                        correta = 1;
-                    } else {
-                        printf("Errado! Tente novamente.\n");
-                        getchar();
-                    }
-                } else {
-                    printf("Entrada invalida! Tente novamente.\n");
-                    getchar();
-                }
+            if (strcmp(resposta, questoes[i].resposta) == 0) {
+                printf("Correto!\n");
+                correta = 1;
             } else {
-                char resposta[256];
-                printf("%s\n", questoes[i].pergunta);
-                printf("Sua resposta: ");
-                scanf("%s", resposta);
-
-                if (strcmp(resposta, questoes[i].resposta) == 0) {
-                    printf("Correto!\n");
-                    correta = 1;
-                } else {
-                    printf("Errado! Tente novamente.\n");
-                    getchar();
-                    getchar();
-                }
+                printf("Errado! Tente novamente.\n");
+                getchar();
+                getchar();
             }
+
             if (correta) {
                 printf("Pressione Enter para continuar...");
                 getchar();
@@ -210,14 +149,10 @@ void nivelPerguntas(int *vidas, Questao questoes[], int total_questoes) {
 void nivelfacil(int *vidas) {
     Questao questoes[] = {
         {"Pergunta 1:\n4, 8 e 16: Qual eh o proximo numero?", "32"},
-        {"Pergunta 2:\n6 = 30\n 3 = 15\n 7 = 35\n 2 = ?", "10"},
-        {"Pergunta 3:\nA + B = 60\nA - B = 40\n A / B = ?", "5"},
-        {"Pergunta 4:\n13,18 = 31\n7,25 = 32\n12, 30 = 42\n26, 13 = ?", "39"},
-        {"Pergunta 5:\nComplete a matriz 4x4:\n"
-         "0, 2, 1, 0, 0\n"
-         "1, 4, 1, 1, 1\n"
-         "2, 6, 1, 0, 2\n"
-         "3, ?, ?, ?, ?\n", "8, 1, 1, 3"},
+        {"Pergunta 2:\n6 = 30\n3 = 15\n7 = 35\n2 = ?", "10"},
+        {"Pergunta 3:\nA + B = 60\nA - B = 40\nA / B = ?", "5"},
+        {"Pergunta 4:\n13, 18 = 31\n7, 25 = 32\n12, 30 = 42\n26, 13 = ?", "39"},
+        {"Pergunta 5:\n7, 15, 31: Qual eh o proximo numero?", "63"},
     };
 
     nivelPerguntas(vidas, questoes, 5);
@@ -229,11 +164,6 @@ void nivelmedio(int *vidas) {
         {"Pergunta 2 do medio:\nExemplo?", "Resposta"},
         {"Pergunta 3 do medio:\nExemplo?", "Resposta"},
         {"Pergunta 4 do medio:\nExemplo?", "Resposta"},
-        {"Pergunta 5 do medio:\nComplete a matriz 4x4:\n"
-         "0, 2, 1, 0, 0\n"
-         "1, 4, 1, 1, 1\n"
-         "2, 6, 1, 0, 2\n"
-         "3, ?, ?, ?, ?\n", "8, 1, 1, 3"},
     };
 
     nivelPerguntas(vidas, questoes, 5);
@@ -245,11 +175,6 @@ void niveldificil(int *vidas) {
         {"Pergunta 2 do dificil:\nExemplo?", "Resposta"},
         {"Pergunta 3 do dificil:\nExemplo?", "Resposta"},
         {"Pergunta 4 do dificil:\nExemplo?", "Resposta"},
-        {"Pergunta 5 do dificil:\nComplete a matriz 4x4:\n"
-         "0, 2, 1, 0, 0\n"
-         "1, 4, 1, 1, 1\n"
-         "2, 6, 1, 0, 2\n"
-         "3, ?, ?, ?, ?\n", "8, 1, 1, 3"},
     };
 
     nivelPerguntas(vidas, questoes, 5);
