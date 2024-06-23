@@ -94,7 +94,7 @@ void nivelFacil() {
          "2, 1, 0, 0\n"
          "4, 1, 1, 1\n"
          "6, 1, 0, 2\n"
-         "?, ?, ?, ?\n", "8, 1, 1, 3"},
+         "3, ?, ?, ?, ?\n", "8, 1, 1, 3"},
     };
 
     srand(time(NULL));
@@ -105,8 +105,6 @@ void nivelFacil() {
 
         while (!correta) {
             limparTela();
-
-             centralizarTextoVertical(6);
 
             if (i == 4) {
                 int matriz[4][4] = {
@@ -145,7 +143,6 @@ void nivelFacil() {
                      centralizarTextoVertical(6);
 
                     printf("Errado! Tente novamente.\n");
-                    vidas--;
                     getchar();
                     getchar();
                 }
@@ -160,7 +157,6 @@ void nivelFacil() {
                     correta = 1;
                 } else {
                     printf("Errado! Tente novamente.\n");
-                    vidas--;
                     getchar();
                     getchar();
                 }
