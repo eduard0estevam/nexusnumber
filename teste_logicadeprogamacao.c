@@ -9,6 +9,9 @@ typedef struct {
     char resposta[256];
 } Questao;
 
+int vidas = 3; // Variável global para controlar as vidas do jogador
+
+
 // Função para trocar duas questões
 void trocar(Questao *a, Questao *b) {
     Questao temp = *a;
@@ -83,18 +86,17 @@ void centralizarTextoVertical(int altura_texto) {
 // Função do nível fácil
 void nivelFacil() {
    Questao questoes[5] = {
-        {"\t\t\t\tPergunta 1:\n\t\t\t\t4, 8 e 16: Qual eh o proximo numero?", "32"},
-        {"\t\t\t\tPergunta 2:\n\t\t\t\t6 = 30\n\t\t\t\t 3 = 15\n\t\t\t\t 7 = 35\n\t\t\t\t 2 = ?", "10"},
-        {"\t\t\t\tPergunta 3:\n\t\t\t\tA + B = 60\n\t\t\t\tA - B = 40\n\t\t\t\t A / B = ?", "5"},
-        {"\t\t\t\tPergunta 4:\n\t\t\t\t13,18 = 31\n\t\t\t\t7,25 = 32\n\t\t\t\t12, 30 = 42\n\t\t\t\t26, 13 = ?", "39"},
-        {"\t\t\t\tPergunta 5:\n\t\t\tComplete a matriz 4x4:\n"
-         "\t\t\t\t0, 2, 1, 0, 0\n"
-         "\t\t\t\t1, 4, 1, 1, 1\n"
-         "\t\t\t\t2, 6, 1, 0, 2\n"
-         "\t\t\t\t3, ?, ?, ?, ?\n", "8, 1, 1, 3"},
+        {"Pergunta 1:\n4, 8 e 16: Qual eh o proximo numero?", "32"},
+        {"Pergunta 2:\n6 = 30\n 3 = 15\n 7 = 35\n 2 = ?", "10"},
+        {"Pergunta 3:\nA + B = 60\nA - B = 40\n A / B = ?", "5"},
+        {"Pergunta 4:\n13,18 = 31\n7,25 = 32\n12, 30 = 42\n26, 13 = ?", "39"},
+        {"Pergunta 5:\nComplete a matriz 4x4:\n"
+         "2, 1, 0, 0\n"
+         "4, 1, 1, 1\n"
+         "6, 1, 0, 2\n"
+         "?, ?, ?, ?\n", "8, 1, 1, 3"},
     };
 
-//colocar a ordem de questoes de forma aleatoria
     srand(time(NULL));
     embaralhar(questoes, 5);
 
@@ -103,6 +105,9 @@ void nivelFacil() {
 
         while (!correta) {
             limparTela();
+
+             centralizarTextoVertical(6);
+
             if (i == 4) {
                 int matriz[4][4] = {
                     {2, 1, 0, 0},
@@ -118,41 +123,50 @@ void nivelFacil() {
                     {0, 0, 0, 0}
                 };
 
-                centralizarTextoVertical(7); // 7 linhas de texto aproximadamente
+        
                 printf("%s\n", questoes[i].pergunta);
                 imprimirMatriz(matriz);
 
-                printf("Preencha a linha 3 (separados por espaco): ");
+                printf("Preencha a linha 3 (separados por espaço): ");
                 for (int j = 0; j < 4; j++) {
                     scanf("%d", &resposta[3][j]);
                 }
 
+
                 if (validarMatriz(matriz, resposta)) {
+
+                     centralizarTextoVertical(6);
+
                     printf("Correto!\n");
+
                     correta = 1;
                 } else {
+
+                     centralizarTextoVertical(6);
+
                     printf("Errado! Tente novamente.\n");
+                    vidas--;
                     getchar();
                     getchar();
                 }
             } else {
                 char resposta[256];
-                centralizarTextoVertical(6); // 6 linhas de texto aproximadamente
                 printf("%s\n", questoes[i].pergunta);
-                printf("\t\t\t\tSua resposta: \n");
+                printf("Sua resposta: ");
                 scanf("%s", resposta);
 
                 if (strcmp(resposta, questoes[i].resposta) == 0) {
-                    printf("\t\t\t\tCorreto!\n");
+                    printf("Correto!\n");
                     correta = 1;
                 } else {
-                    printf("\t\t\t\tErrado! Tente novamente.\n");
+                    printf("Errado! Tente novamente.\n");
+                    vidas--;
                     getchar();
                     getchar();
                 }
             }
             if (correta) {
-                printf("\t\t\t\tPressione Enter para continuar...");
+                printf("Pressione Enter para continuar...");
                 getchar();
                 getchar();
             }
@@ -173,7 +187,7 @@ void selecionarDificuldade() {
         printf("\t\t\t\tSelecione a dificuldade do jogo:\n\n");
         printf("\t\t\t\t1. Facil\n");
         printf("\t\t\t\t2. Medio\n");
-        printf("\t\t\t\t3. Dificil\n\n");
+        printf("\t\t\t\t3. Dif1cil\n\n");
         printf("\t\t\t\tEscolha uma opcao (1-3): ");
         scanf("%d", &escolha);
 
@@ -229,7 +243,7 @@ void mostrarMenu() {
                 exit(0);
                 break;
             default:
-                printf("Opção invalida! Tente novamente.\n");
+                printf("Opcao invalida! Tente novamente.\n");
                 getchar();
                 getchar();
                 break;
