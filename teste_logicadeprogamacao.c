@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <windows.h>
+#include <conio.h>
 #include <string.h>
 
 // Estrutura para armazenar perguntas e respostas
@@ -9,17 +11,103 @@ typedef struct {
     char resposta[256];
 } Questao;
 
-int vidas = 3; // Variável global para controlar as vidas do jogador
+// Variáveis globais
+int vidas = 3;
+int num[20];
+int resposta[10];
+int resposta_certa[10];
+char op;
+int operacao;
+int tentativas = 1;
+int dificuldade_jogo;
+int i;
 
+// Prototypes
+void limparTela();
+void esperar(int segundos);
+char exibirMenuPrincipal();
+char exibirMenuNivel();
+void executarJogo(char nivelDoJogo);
+void nivelfacil(int *vidas);
+void nivelmedio(int *vidas);
+void niveldificil(int *vidas);
+void trocar(Questao *a, Questao *b);
+void embaralhar(Questao questoes[], int n);
+void imprimirMatriz(int matriz[4][4]);
+int validarMatriz(int matriz[4][4], int resposta[4][4]);
 
-// Função para trocar duas questões
+int main() {
+    char escolhaMenu;
+    char nivelDoJogo;
+
+    srand(time(NULL));
+
+    while (1) {
+        escolhaMenu = exibirMenuPrincipal();
+
+        if (escolhaMenu == '1') {
+            limparTela();
+            printf("\n\n\n\n                                                  Bem-vindo ao Nexus Number!\n\n");
+            esperar(2);
+            limparTela();
+            nivelDoJogo = exibirMenuNivel();
+            executarJogo(nivelDoJogo);
+        } else if (escolhaMenu == '2') {
+            exit(0);
+        }
+    }
+
+    return 0;
+}
+
+void limparTela() {
+    system("cls");
+}
+
+void esperar(int segundos) {
+    Sleep(segundos * 1000);
+}
+
+char exibirMenuPrincipal() {
+    printf("\n\n\n\n                                                      Nexus Number    \n\n\n\n\n\n\n");
+    printf("                                                   1 - Iniciar Jogo    \n\n");
+    printf("                                                       2 - Sair\n");
+
+    return getch();
+}
+
+char exibirMenuNivel() {
+    printf("\n\n\n\n                                                Escolha o nivel do jogo: \n\n\n");
+    printf("                                                       1 - Facil\n\n");
+    printf("                                                       2 - Medio\n\n");
+    printf("                                                       3 - Dificil\n\n");
+
+    return getch();
+}
+
+void executarJogo(char nivelDoJogo) {
+    switch (nivelDoJogo) {
+        case '1':
+            nivelfacil(&vidas);
+            break;
+        case '2':
+            nivelmedio(&vidas);
+            break;
+        case '3':
+            niveldificil(&vidas);
+            break;
+        default:
+            // Nada acontece se o nível não for 1, 2 ou 3.
+            break;
+    }
+}
+
 void trocar(Questao *a, Questao *b) {
     Questao temp = *a;
     *a = *b;
     *b = temp;
 }
 
-// Função para embaralhar as questões
 void embaralhar(Questao questoes[], int n) {
     for (int i = n - 1; i > 0; i--) {
         int j = rand() % (i + 1);
@@ -27,7 +115,6 @@ void embaralhar(Questao questoes[], int n) {
     }
 }
 
-// Função para imprimir a matriz 4x4
 void imprimirMatriz(int matriz[4][4]) {
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
@@ -41,7 +128,6 @@ void imprimirMatriz(int matriz[4][4]) {
     }
 }
 
-// Função para validar a resposta da matriz
 int validarMatriz(int matriz[4][4], int resposta[4][4]) {
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
@@ -53,60 +139,17 @@ int validarMatriz(int matriz[4][4], int resposta[4][4]) {
     return 1; // Resposta correta
 }
 
-// Função para limpar a tela
-void limparTela() {
-    #ifdef _WIN32
-        system("cls");
-    #else
-        system("clear");
-    #endif
-}
-
-// Função para obter a altura da janela do terminal
-int alturaTerminal() {
-    #ifdef _WIN32
-        return 25; // Ajuste conforme necessário para Windows
-    #else
-        struct winsize w;
-        ioctl(0, TIOCGWINSZ, &w);
-        return w.ws_row;
-    #endif
-}
-
-// Função para centralizar o texto verticalmente
-void centralizarTextoVertical(int altura_texto) {
-    int altura_terminal = alturaTerminal();
-    int linha_central = (altura_terminal - altura_texto) / 2;
-
-    for (int i = 0; i < linha_central; i++) {
-        printf("\n");
-    }
-}
-
-// Função do nível fácil
-void nivelFacil() {
-   Questao questoes[5] = {
-        {"Pergunta 1:\n4, 8 e 16: Qual eh o proximo numero?", "32"},
-        {"Pergunta 2:\n6 = 30\n 3 = 15\n 7 = 35\n 2 = ?", "10"},
-        {"Pergunta 3:\nA + B = 60\nA - B = 40\n A / B = ?", "5"},
-        {"Pergunta 4:\n13,18 = 31\n7,25 = 32\n12, 30 = 42\n26, 13 = ?", "39"},
-        {"Pergunta 5:\nComplete a matriz 4x4:\n"
-         "2, 1, 0, 0\n"
-         "4, 1, 1, 1\n"
-         "6, 1, 0, 2\n"
-         "3, ?, ?, ?, ?\n", "8, 1, 1, 3"},
-    };
-
+void nivelPerguntas(int *vidas, Questao questoes[], int total_questoes) {
     srand(time(NULL));
-    embaralhar(questoes, 5);
+    embaralhar(questoes, total_questoes);
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < total_questoes; i++) {
         int correta = 0;
 
         while (!correta) {
             limparTela();
 
-            if (i == 4) {
+            if (i == 4) { // Questão da matriz
                 int matriz[4][4] = {
                     {2, 1, 0, 0},
                     {4, 1, 1, 1},
@@ -121,29 +164,23 @@ void nivelFacil() {
                     {0, 0, 0, 0}
                 };
 
-        
                 printf("%s\n", questoes[i].pergunta);
                 imprimirMatriz(matriz);
 
+                char linha[256];
                 printf("Preencha a linha 3 (separados por espaço): ");
-                for (int j = 0; j < 4; j++) {
-                    scanf("%d", &resposta[3][j]);
-                }
+                fgets(linha, sizeof(linha), stdin);
 
-
-                if (validarMatriz(matriz, resposta)) {
-
-                     centralizarTextoVertical(6);
-
-                    printf("Correto!\n");
-
-                    correta = 1;
+                if (sscanf(linha, "%d %d %d %d", &resposta[3][0], &resposta[3][1], &resposta[3][2], &resposta[3][3]) == 4) {
+                    if (validarMatriz(matriz, resposta)) {
+                        printf("Correto!\n");
+                        correta = 1;
+                    } else {
+                        printf("Errado! Tente novamente.\n");
+                        getchar();
+                    }
                 } else {
-
-                     centralizarTextoVertical(6);
-
-                    printf("Errado! Tente novamente.\n");
-                    getchar();
+                    printf("Entrada invalida! Tente novamente.\n");
                     getchar();
                 }
             } else {
@@ -170,84 +207,50 @@ void nivelFacil() {
     }
 }
 
-// Função para exibir o submenu de dificuldade
-void selecionarDificuldade() {
-    int escolha;
-    int valido = 0;
+void nivelfacil(int *vidas) {
+    Questao questoes[] = {
+        {"Pergunta 1:\n4, 8 e 16: Qual eh o proximo numero?", "32"},
+        {"Pergunta 2:\n6 = 30\n 3 = 15\n 7 = 35\n 2 = ?", "10"},
+        {"Pergunta 3:\nA + B = 60\nA - B = 40\n A / B = ?", "5"},
+        {"Pergunta 4:\n13,18 = 31\n7,25 = 32\n12, 30 = 42\n26, 13 = ?", "39"},
+        {"Pergunta 5:\nComplete a matriz 4x4:\n"
+         "0, 2, 1, 0, 0\n"
+         "1, 4, 1, 1, 1\n"
+         "2, 6, 1, 0, 2\n"
+         "3, ?, ?, ?, ?\n", "8, 1, 1, 3"},
+    };
 
-    while (!valido) {
-        limparTela();
-
-        centralizarTextoVertical(6); // 6 linhas de texto aproximadamente
-
-        printf("\t\t\t\tSelecione a dificuldade do jogo:\n\n");
-        printf("\t\t\t\t1. Facil\n");
-        printf("\t\t\t\t2. Medio\n");
-        printf("\t\t\t\t3. Dif1cil\n\n");
-        printf("\t\t\t\tEscolha uma opcao (1-3): ");
-        scanf("%d", &escolha);
-
-        // Limpar buffer de entrada após a leitura do scanf
-        while(getchar() != '\n');
-
-        switch (escolha) {
-            case 1:
-                nivelFacil();
-                valido = 1;
-                break;
-            case 2:
-                // printf("Nível médio ainda não implementado.\n");
-                // valido = 1;
-                break;
-            case 3:
-                // printf("Nível difícil ainda não implementado.\n");
-                valido = 1;
-                break;
-            default:
-                // printf("Opção inválida! Tente novamente.\n");
-                break;
-        }
-    }
+    nivelPerguntas(vidas, questoes, 5);
 }
 
-// Função para exibir o menu principal
-void mostrarMenu() {
-    int escolha;
-    int valido = 0;
+void nivelmedio(int *vidas) {
+    Questao questoes[] = {
+        {"Pergunta 1 do medio:\nExemplo?", "Resposta"},
+        {"Pergunta 2 do medio:\nExemplo?", "Resposta"},
+        {"Pergunta 3 do medio:\nExemplo?", "Resposta"},
+        {"Pergunta 4 do medio:\nExemplo?", "Resposta"},
+        {"Pergunta 5 do medio:\nComplete a matriz 4x4:\n"
+         "0, 2, 1, 0, 0\n"
+         "1, 4, 1, 1, 1\n"
+         "2, 6, 1, 0, 2\n"
+         "3, ?, ?, ?, ?\n", "8, 1, 1, 3"},
+    };
 
-    while (!valido) {
-        limparTela();
-
-        centralizarTextoVertical(6); // 6 linhas de texto aproximadamente
-
-        printf("\t\t\t\tNexusNumbers!\n\n");
-        printf("\t\t\t\t1. Iniciar Jogo\n");
-        printf("\t\t\t\t2. Sair\n\n");
-        printf("\t\t\t\tEscolha uma opcao (1-2): ");
-        scanf("%d", &escolha);
-
-        // Limpar buffer de entrada após a leitura do scanf
-        while(getchar() != '\n');
-
-        switch (escolha) {
-            case 1:
-                selecionarDificuldade();
-                valido = 1;
-                break;
-            case 2:
-                printf("Saindo...\n");
-                exit(0);
-                break;
-            default:
-                printf("Opcao invalida! Tente novamente.\n");
-                getchar();
-                getchar();
-                break;
-        }
-    }
+    nivelPerguntas(vidas, questoes, 5);
 }
 
-int main() {
-    mostrarMenu();
-    return 0;
+void niveldificil(int *vidas) {
+    Questao questoes[] = {
+        {"Pergunta 1 do dificil:\nExemplo?", "Resposta"},
+        {"Pergunta 2 do dificil:\nExemplo?", "Resposta"},
+        {"Pergunta 3 do dificil:\nExemplo?", "Resposta"},
+        {"Pergunta 4 do dificil:\nExemplo?", "Resposta"},
+        {"Pergunta 5 do dificil:\nComplete a matriz 4x4:\n"
+         "0, 2, 1, 0, 0\n"
+         "1, 4, 1, 1, 1\n"
+         "2, 6, 1, 0, 2\n"
+         "3, ?, ?, ?, ?\n", "8, 1, 1, 3"},
+    };
+
+    nivelPerguntas(vidas, questoes, 5);
 }
