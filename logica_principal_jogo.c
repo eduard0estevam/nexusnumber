@@ -18,7 +18,7 @@ int tentativas = 1;
 int dificuldade_jogo;
 int i;
 
-// Prototypes
+// Protótipos
 void limparTela();
 void esperar(int segundos);
 char exibirMenuPrincipal();
@@ -62,15 +62,16 @@ int main() {
 
     return 0;
 }
+//função para limpar a tela
 
 void limparTela() {
     system("cls");
 }
-
+//função para "esperar" o carregamento da tela
 void esperar(int segundos) {
     Sleep(segundos * 1000);
 }
-
+//menu principal do jogo
 char exibirMenuPrincipal() {
     printf("\n\n\n\n                                                      Nexus Number    \n\n\n\n\n\n\n");
     printf("                                                   1 - Iniciar Jogo    \n\n");
@@ -79,7 +80,7 @@ char exibirMenuPrincipal() {
 
     return getch();
 }
-
+//submenu de escoloha da dificuldade do jogo
 char exibirMenuNivel() {
     printf("\n\n\n\n                                                Escolha o nivel do jogo: \n\n\n");
     printf("                                                       1 - Facil\n\n");
@@ -166,11 +167,16 @@ void nivelPerguntas(int *vidas, Questao questoes[], int total_questoes) {
 
 void nivelfacil(int *vidas) {
     Questao questoes[] = {
-        {"Pergunta 1:\n4, 8 e 16: Qual eh o proximo numero?", "32"},
-        {"Pergunta 2:\n6 = 30\n3 = 15\n7 = 35\n2 = ?", "10"},
-        {"Pergunta 3:\nA + B = 60\nA - B = 40\nA / B = ?", "5"},
-        {"Pergunta 4:\n13, 18 = 31\n7, 25 = 32\n12, 30 = 42\n26, 13 = ?", "39"},
-        {"Pergunta 5:\n7, 15, 31: Qual eh o proximo numero?", "63"},
+        {"Pergunta 1:\n2, 6, 12, 20, 30, ? Qual eh o proximo numero na sequencia?", "42"},
+        {"Pergunta 2:\nA soma das idades de Ana e Bia é 44. Ana eh 8 anos mais velha que Bia. Qual eh a idade de Ana?", "26"},
+        {"Pergunta 3:\n13,18 = 31\n7,25 = 32\n12, 30 = 42\n26, 13 = ?", "39"},
+        {"Pergunta 4:\nSe 5 maquinas podem completar um trabalho em 8 horas, quantas horas levarao 8 maquinas para completar o mesmo trabalho?", "5"},
+        {"Pergunta 5:\nJoao tem o dobro da idade de Pedro. Se a diferenca de suas idades eh de 15 anos, quantos anos Joao tem?", "30"},
+        {"Pergunta 6:\nEm uma caixa ha 20 moedas, totalizando R$ 3,80. Se ha apenas moedas de 5 e 25 centavos, quantas moedas de cada tipo ha?", "16 e 4"},
+        {"Pergunta 7:\n + B = 60\nA - B = 40\n A / B = ?", "5"},
+        {"Pergunta 8:\nEm um quadrado formado por 16 palitos, com quantos palitos eu posso fazer 2 quadrados ?.", "4"},
+        {"Pergunta 9:\nA média aritmetica de cinco numeros é 12. Se um dos numeros é 16, qual eh a media dos outros quatro números?", "11"},
+        {"Pergunta 10:\n6 = 30\n 3 = 15\n 7 = 35\n 2 = ?", "10"},
     };
 
     nivelPerguntas(vidas, questoes, 10);
@@ -178,24 +184,24 @@ void nivelfacil(int *vidas) {
 
 void nivelmedio(int *vidas) {
     Questao questoes[] = {
-        {"Pergunta 1 do medio:\nExemplo?", "Resposta"},
-        {"Pergunta 2 do medio:\nExemplo?", "Resposta"},
-        {"Pergunta 3 do medio:\nExemplo?", "Resposta"},
-        {"Pergunta 4 do medio:\nExemplo?", "Resposta"},
+        {"Pergunta 1:\nUm triângulo equilatero tem um perimetro de 45 cm. Qual eh a area deste triangulo? (Aproximadamente)", "48"},
+        {"Pergunta 2:\nEm um saco há 5 bolas vermelhas, 4 bolas azuis e 3 bolas verdes. Qual a probabilidade de se retirar uma bola azul?", "1/3"},
+        {"Pergunta 3:\nExemplo?", "Resposta"},
+        {"Pergunta 4 :\nExemplo?", "Resposta"},
     };
 
-    nivelPerguntas(vidas, questoes, 5);
+    nivelPerguntas(vidas, questoes, 10);
 }
 
 void niveldificil(int *vidas) {
     Questao questoes[] = {
-        {"Pergunta 1 do dificil:\nExemplo?", "Resposta"},
-        {"Pergunta 2 do dificil:\nExemplo?", "Resposta"},
-        {"Pergunta 3 do dificil:\nExemplo?", "Resposta"},
-        {"Pergunta 4 do dificil:\nExemplo?", "Resposta"},
+        {"Pergunta 1:\nExemplo?", "Resposta"},
+        {"Pergunta 2:\nExemplo?", "Resposta"},
+        {"Pergunta 3:\nExemplo?", "Resposta"},
+        {"Pergunta 4:\nExemplo?", "Resposta"},
     };
 
-    nivelPerguntas(vidas, questoes, 5);
+    nivelPerguntas(vidas, questoes, 10);
 }
 
 void salvarPontuacao(int pontos) {
