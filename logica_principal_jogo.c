@@ -13,11 +13,7 @@ typedef struct {
 
 // Variáveis globais
 int vidas = 3;
-int num[20];
-int resposta[10];
-int resposta_certa[10];
-char op;
-int operacao;
+int pontos = 0;
 int tentativas = 1;
 int dificuldade_jogo;
 int i;
@@ -34,6 +30,9 @@ void niveldificil(int *vidas);
 void trocar(Questao *a, Questao *b);
 void embaralhar(Questao questoes[], int n);
 void nivelPerguntas(int *vidas, Questao questoes[], int total_questoes);
+void salvarPontuacao(int pontos);
+void carregarPontuacoesAltas();
+void exibirPontuacoesAltas();
 
 int main() {
     char escolhaMenu;
@@ -52,6 +51,11 @@ int main() {
             nivelDoJogo = exibirMenuNivel();
             executarJogo(nivelDoJogo);
         } else if (escolhaMenu == '2') {
+            limparTela();
+            exibirPontuacoesAltas();
+            esperar(5);
+            limparTela();
+        } else if (escolhaMenu == '3') {
             exit(0);
         }
     }
@@ -70,7 +74,8 @@ void esperar(int segundos) {
 char exibirMenuPrincipal() {
     printf("\n\n\n\n                                                      Nexus Number    \n\n\n\n\n\n\n");
     printf("                                                   1 - Iniciar Jogo    \n\n");
-    printf("                                                       2 - Sair\n");
+    printf("                                                   2 - Pontuacoes Altas\n\n");
+    printf("                                                   3 - Sair\n");
 
     return getch();
 }
@@ -96,9 +101,12 @@ void executarJogo(char nivelDoJogo) {
             niveldificil(&vidas);
             break;
         default:
-            // Nada acontece se o nível não for 1, 2 ou 3.
+            // Nada acontece se o nível não for 1, 2 ou 3 //
             break;
     }
+    printf("Jogo terminado! Sua pontuacao final eh: %d\n", pontos);
+    salvarPontuacao(pontos);
+    pontos = 0; // Resetar a pontuação para o próximo jogo
 }
 
 void trocar(Questao *a, Questao *b) {
@@ -121,9 +129,11 @@ void nivelPerguntas(int *vidas, Questao questoes[], int total_questoes) {
     for (int i = 0; i < total_questoes; i++) {
         int correta = 0;
 
-        while (!correta) {
+        while (!correta && *vidas > 0) {
             limparTela();
             char resposta[256];
+            printf("Vidas restantes: %d\n", *vidas);
+            printf("Pontuacao: %d\n", pontos);
             printf("%s\n", questoes[i].pergunta);
             printf("Sua resposta: ");
             scanf("%s", resposta);
@@ -131,17 +141,25 @@ void nivelPerguntas(int *vidas, Questao questoes[], int total_questoes) {
             if (strcmp(resposta, questoes[i].resposta) == 0) {
                 printf("Correto!\n");
                 correta = 1;
+                pontos += 10; // Incrementa a pontuação por resposta correta
             } else {
                 printf("Errado! Tente novamente.\n");
-                getchar();
-                getchar();
+                (*vidas)--;
+                if (*vidas > 0) {
+                    esperar(2);
+                }
             }
 
             if (correta) {
                 printf("Pressione Enter para continuar...");
-                getchar();
+                getchar(); // Espera pelo Enter
                 getchar();
             }
+        }
+
+        if (*vidas == 0) {
+            printf("Voce perdeu todas as suas vidas. Fim de jogo!\n");
+            break;
         }
     }
 }
@@ -155,7 +173,7 @@ void nivelfacil(int *vidas) {
         {"Pergunta 5:\n7, 15, 31: Qual eh o proximo numero?", "63"},
     };
 
-    nivelPerguntas(vidas, questoes, 5);
+    nivelPerguntas(vidas, questoes, 10);
 }
 
 void nivelmedio(int *vidas) {
@@ -178,4 +196,34 @@ void niveldificil(int *vidas) {
     };
 
     nivelPerguntas(vidas, questoes, 5);
+}
+
+void salvarPontuacao(int pontos) {
+    FILE *arquivo = fopen("pontuacoes.txt", "a");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo de pontuacoes.\n");
+        return;
+    }
+    fprintf(arquivo, "%d\n", pontos);
+    fclose(arquivo);
+}
+
+void carregarPontuacoesAltas() {
+    FILE *arquivo = fopen("pontuacoes.txt", "r");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo de pontuacoes.\n");
+        return;
+    }
+
+    int pontuacao;
+    printf("Pontuacoes Altas:\n");
+    while (fscanf(arquivo, "%d", &pontuacao) != EOF) {
+        printf("%d\n", pontuacao);
+    }
+
+    fclose(arquivo);
+}
+
+void exibirPontuacoesAltas() {
+    carregarPontuacoesAltas();
 }
