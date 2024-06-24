@@ -18,7 +18,7 @@ int tentativas = 1;
 int dificuldade_jogo;
 int i;
 
-// Protótipos
+// Protótipos das variáveis
 void limparTela();
 void esperar(int segundos);
 char exibirMenuPrincipal();
@@ -170,11 +170,11 @@ void nivelfacil(int *vidas) {
         {"Pergunta 1:\n2, 6, 12, 20, 30, ? Qual eh o proximo numero na sequencia?", "42"},
         {"Pergunta 2:\nA soma das idades de Ana e Bia é 44. Ana eh 8 anos mais velha que Bia. Qual eh a idade de Ana?", "26"},
         {"Pergunta 3:\n13,18 = 31\n7,25 = 32\n12, 30 = 42\n26, 13 = ?", "39"},
-        {"Pergunta 4:\nSe 5 maquinas podem completar um trabalho em 8 horas, quantas horas levarao 8 maquinas para completar o mesmo trabalho?", "5"},
+        {"Pergunta 4:\nQual é o próximo número na sequência: 1, 4, 9, 16, 25, ...?", "36"},
         {"Pergunta 5:\nJoao tem o dobro da idade de Pedro. Se a diferenca de suas idades eh de 15 anos, quantos anos Joao tem?", "30"},
-        {"Pergunta 6:\nEm uma caixa ha 20 moedas, totalizando R$ 3,80. Se ha apenas moedas de 5 e 25 centavos, quantas moedas de cada tipo ha?", "16 e 4"},
+        {"Pergunta 6:\n4, 8 e 16: Qual eh o proximo numero?", "32"},
         {"Pergunta 7:\n + B = 60\nA - B = 40\n A / B = ?", "5"},
-        {"Pergunta 8:\nEm um quadrado formado por 16 palitos, com quantos palitos eu posso fazer 2 quadrados ?.", "4"},
+        {"Pergunta 8:\nEm um quadrado formado por 16 palitos, com quantos palitos eu posso fazer 2 quadrados ?", "4"},
         {"Pergunta 9:\nA média aritmetica de cinco numeros é 12. Se um dos numeros é 16, qual eh a media dos outros quatro números?", "11"},
         {"Pergunta 10:\n6 = 30\n 3 = 15\n 7 = 35\n 2 = ?", "10"},
     };
@@ -184,20 +184,22 @@ void nivelfacil(int *vidas) {
 
 void nivelmedio(int *vidas) {
     Questao questoes[] = {
-        {"Pergunta 1:\nUm triângulo equilatero tem um perimetro de 45 cm. Qual eh a area deste triangulo? (Aproximadamente)", "48"},
-        {"Pergunta 2:\nEm um saco há 5 bolas vermelhas, 4 bolas azuis e 3 bolas verdes. Qual a probabilidade de se retirar uma bola azul?", "1/3"},
-        {"Pergunta 3:\nExemplo?", "Resposta"},
-        {"Pergunta 4 :\nExemplo?", "Resposta"},
+        {"Pergunta 1:\nEm um saco há 5 bolas vermelhas, 4 bolas azuis e 3 bolas verdes. Qual a probabilidade de se retirar uma bola azul?", "1/3"},
+        {"Pergunta 3:\nSe o dobro de um número é 24, qual é metade desse número?", " 6"},
+        {"Pergunta 5:\nSe 5 maquinas podem completar um trabalho em 8 horas, quantas horas levarao 8 maquinas para completar o mesmo trabalho?", "5"},
+        {"Pergunta 6:\nUm produto custa R$ 120,00. Após um desconto de 25%%, qual é o novo preço?", "90"},
+        {"Pergunta 7:\nSe a=1, b=2, c=3, ..., z=26, qual é a soma das letras da palavra "CAT?"", "24"},
+        {"Pergunta 8:\nQual é a soma de 1/3 e 1/4?", "7/12"},
     };
 
-    nivelPerguntas(vidas, questoes, 10);
+    nivelPerguntas(vidas, questoes, 5);
 }
 
 void niveldificil(int *vidas) {
     Questao questoes[] = {
-        {"Pergunta 1:\nExemplo?", "Resposta"},
-        {"Pergunta 2:\nExemplo?", "Resposta"},
-        {"Pergunta 3:\nExemplo?", "Resposta"},
+        {"Pergunta 1:\nDuas tartarugas caminham em direção a um lago. A primeira percorre 30 metros por dia e chega ao lago em 16 dias. A segunda tartaruga percorre 20 metros por dia. Quando a primeira tartaruga chegou ao lago, quantos dias ela teve que esperar para a segunda tartaruga chegar?", "8"},
+        {"Pergunta 2:\nEm um sistema de codificação, AB representa os algarismos do dia do nascimento de uma pessoa e CD os algarismos de seu mês de nascimento. Qual é o mês de nascimento dessa pessoa se a data for trinta de julho?", "07"},
+        {"Pergunta 3:\nSe 3 gatos caçam 3 ratos em 3 minutos, em quantos minutos levarão 100 gatos para caçar 100 ratos?", "3"},
         {"Pergunta 4:\nExemplo?", "Resposta"},
     };
 
