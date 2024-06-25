@@ -102,30 +102,23 @@ namespace jogo
             {
                 if (easyButton.Contains(currentMouseState.Position))
                 {
-                    _currentGameState = GameState.Playing;
-                    // logica para a dificuldade facil do jogo
+                    IniciarJogo("facil");
                 }
                 else if (mediumButton.Contains(currentMouseState.Position))
                 {
-                    _currentGameState = GameState.Playing;
-                    // Logica para a dificuldade media do jogo
+                    IniciarJogo("medio");
                 }
                 else if (hardButton.Contains(currentMouseState.Position))
                 {
-                    _currentGameState = GameState.Playing;
-                    // Logica para a dificuldade dificil do jogo
+                    IniciarJogo("dificil");
                 }
             }
         }
 
         private void UpdatePlaying(MouseState currentMouseState)
         {
-            // Lógica de exemplo para usar as funções C
-            int resultado = soma(3, 4);
-            IntPtr mensagemPtr = mensagem();
-            string mensagemStr = Marshal.PtrToStringAnsi(mensagemPtr);
-
-            // Aqui você deve implementar a lógica para verificar a resposta do usuário e atualizar a pontuação e vidas
+            // Exemplo de lógica para atualizar pontuação e vidas
+            ProcessarRespostaJogador("resposta do jogador");
         }
 
         protected override void Draw(GameTime gameTime)
@@ -143,7 +136,7 @@ namespace jogo
                     DrawDifficultySelection();
                     break;
                 case GameState.Playing:
-                    // Draw logic for playing state
+                    // Desenhar elementos do estado de jogo
                     break;
             }
 
@@ -192,18 +185,30 @@ namespace jogo
             Vector2 hardPosition = new Vector2((GraphicsDevice.Viewport.Width - hardSize.X) / 2, GraphicsDevice.Viewport.Height / 2 + 80);
             _spriteBatch.DrawString(_font, hardText, hardPosition, Color.DeepPink);
         }
+
+        // Método para iniciar o jogo com uma dificuldade específica
+        private void IniciarJogo(int nivel)
+        {
+            // Chama a função nativa via P/Invoke
+            // Certifique-se de que 'soma' é chamada aqui, não recursivamente
+            int resultado = soma(nivel, 0);
+        }
+
+        // Método para processar a resposta do jogador
+        private void ProcessarRespostaJogador(string resposta)
+        {
+            // Chama a função nativa via P/Invoke
+            // Certifique-se de que 'mensagem' é chamada aqui, não recursivamente
+            IntPtr mensagemPtr = mensagem();
+            string mensagemStr = Marshal.PtrToStringAnsi(mensagemPtr);
+        }
     }
 
+//estado do jogo//dificuldade
     public enum GameState
     {
         MainMenu,
         DifficultySelection,
         Playing
-    }
-
-    public class Questao
-    {
-        public string Pergunta { get; set; }
-        public string Resposta { get; set; }
     }
 }
