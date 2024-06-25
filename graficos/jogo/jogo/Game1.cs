@@ -47,7 +47,7 @@ namespace jogo
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _font = Content.Load<SpriteFont>("File");
-            _backgroundTexture = Content.Load<Texture2D>("background2");
+            _backgroundTexture = Content.Load<Texture2D>("backgroun2");
         }
 
         protected override void Update(GameTime gameTime)
