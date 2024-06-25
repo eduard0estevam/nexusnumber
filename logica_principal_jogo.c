@@ -12,13 +12,13 @@ typedef struct {
 } Questao;
 
 // Variáveis globais
-int vidas = 3;
-int pontos = 0;
-int tentativas = 1;
-int dificuldade_jogo;
+int vidas = 3; //quantidade de vidas
+int pontos = 0; //pontuação a ser acumulada pelo jogador
+int tentativas = 1;//numero de tentativas
+int dificuldade_jogo; //dificuldade do jogo a ser escolhida pelo jogador 
 int i;
 
-// Protótipos das variáveis
+// Protótipos das funções iniciais do game
 void limparTela();
 void esperar(int segundos);
 char exibirMenuPrincipal();
@@ -123,6 +123,8 @@ void embaralhar(Questao questoes[], int n) {
     }
 }
 
+//Trata a lógica das perguntas, verifica as respostas e atualiza a pontuação e o número de vidas.
+
 void nivelPerguntas(int *vidas, Questao questoes[], int total_questoes) {
     srand(time(NULL));
     embaralhar(questoes, total_questoes);
@@ -207,31 +209,41 @@ void niveldificil(int *vidas) {
     nivelPerguntas(vidas, questoes, 5);
 }
 
-void salvarPontuacao(int pontos) {
-    FILE *arquivo = fopen("pontuacoes.txt", "a");
-    if (arquivo == NULL) {
-        printf("Erro ao abrir o arquivo de pontuacoes.\n");
-        return;
-    }
-    fprintf(arquivo, "%d\n", pontos);
-    fclose(arquivo);
-}
-
+//carrega a pontuação dos jogadores e salva num arquivo de texto
 void carregarPontuacoesAltas() {
     FILE *arquivo = fopen("pontuacoes.txt", "r");
     if (arquivo == NULL) {
-        printf("Erro ao abrir o arquivo de pontuacoes.\n");
+        printf("Erro ao abrir o arquivo de pontuacoes.\n"); //o arquivo ainda nao existe
         return;
     }
 
-    int pontuacao;
-    printf("Pontuacoes Altas:\n");
-    while (fscanf(arquivo, "%d", &pontuacao) != EOF) {
-        printf("%d\n", pontuacao);
+    int pontuacoes[100];
+    int count = 0;
+    
+    while (fscanf(arquivo, "%d", &pontuacoes[count]) != EOF && count < 100) {
+        count++;
     }
 
     fclose(arquivo);
+
+    // Ordenar as pontuações em ordem decrescente
+    for (int i = 0; i < count - 1; i++) {
+        for (int j = i + 1; j < count; j++) {
+            if (pontuacoes[i] < pontuacoes[j]) {
+                int temp = pontuacoes[i];
+                pontuacoes[i] = pontuacoes[j];
+                pontuacoes[j] = temp;
+            }
+        }
+    }
+
+    // Exibir as pontuações
+    printf("Pontuacoes Altas:\n");
+    for (int i = 0; i < count; i++) {
+        printf("%d\n", pontuacoes[i]);
+    }
 }
+
 
 void exibirPontuacoesAltas() {
     carregarPontuacoesAltas();
