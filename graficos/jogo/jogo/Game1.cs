@@ -73,7 +73,7 @@ namespace jogo
                 // Atualiza o timer da tela de carregamento
                 _loadingTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                // Simulação de progresso do carregamento (substitua com lógica real)
+                // Simulação de progresso do carregamento 
                 _progress = Math.Min(_loadingTimer / LoadingTime, 1f);
 
                 // Atualiza a animação da barra de carregamento
@@ -117,7 +117,7 @@ namespace jogo
         private void UpdateLoadingAnimation()
         {
             // Lógica para atualizar a animação da barra de carregamento
-            // Exemplo simples: avança para o próximo frame com base no progresso
+            // Exemplo: avança para o próximo frame com base no progresso
             _currentAnimationFrame = (int)(_progress * (_loadingBarFillFrames.Length - 1));
         }
 
