@@ -20,7 +20,13 @@ namespace jogo
         private const float LoadingTime = 15f; // Tempo de carregamento em segundos
 
         [DllImport("logica.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void iniciarJogo(string nomeJogador, char nivelDoJogo);
+        private static extern void iniciarJogo(string nomeJogador, char nivelDoJogo);/ Campos específicos para a barra de carregamento animada
+        private Texture2D _loadingBarBackgroundTexture; // Textura do fundo da barra de carregamento
+        private Texture2D[] _loadingBarFillFrames; // Array de texturas para os frames da animação
+        private float _progress; // Progresso do carregamento (de 0 a 1)
+        private int _currentAnimationFrame; // Índice do frame atual da animação
+        private const float AnimationSpeed = 0.1f; // Velocidade de animação da barra de carregamento
+
 
         public Game1()
         {
@@ -42,7 +48,18 @@ namespace jogo
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _font = Content.Load<SpriteFont>("File");
             _backgroundTexture = Content.Load<Texture2D>("backgroun2");
-            _loadingTexture = Content.Load<Texture2D>("loading_screen"); // Carrega a textura da tela de carregamento
+            _loadingTexture = Content.Load<Texture2D>("carregamento"); // Carrega a textura da tela de carregamento
+             _loadingBarBackgroundTexture = Content.Load<Texture2D>("loadingBarBackground");
+
+            // Carrega os frames da animação
+        _loadingBarFillFrames = new Texture2D[3]; // Suponha que existam 3 frames na animação
+        for (int i = 0; i < _loadingBarFillFrames.Length; i++)
+        {
+            _loadingBarFillFrames[i] = Content.Load<Texture2D>($"loadingBarFill_{i}");
+        }
+
+        _currentAnimationFrame = 0; // Começa com o primeiro frame da animação
+    }
         }
 
         protected override void Update(GameTime gameTime)
@@ -56,6 +73,12 @@ namespace jogo
             {
                 // Atualiza o timer da tela de carregamento
                 _loadingTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                // Simulação de progresso do carregamento (substitua com lógica real)
+                _progress = Math.Min(_loadingTimer / LoadingTime, 1f);
+
+                // Atualiza a animação da barra de carregamento
+                UpdateLoadingAnimation();
 
                 // Se o timer exceder o tempo de carregamento, muda para o estado de jogo
                 if (_loadingTimer >= LoadingTime)
@@ -146,8 +169,14 @@ namespace jogo
         {
             _spriteBatch.Begin();
 
+            // Desenha o fundo preto se estiver carregando ou durante as fases do jogo
+    if (_isLoading || _currentGameState == GameState.Playing)
+    {
+        _spriteBatch.Draw(_backgroundTexture, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.Black);
+    }
+    else {
             _spriteBatch.Draw(_backgroundTexture, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
-
+         }
             switch (_currentGameState)
             {
                 case GameState.MainMenu:
@@ -163,10 +192,15 @@ namespace jogo
 
             // Se estiver carregando, desenha a tela de carregamento
             if (_isLoading)
-            {
-                // Desenha a tela de carregamento centralizada
-                _spriteBatch.Draw(_loadingTexture, new Vector2((GraphicsDevice.Viewport.Width - _loadingTexture.Width) / 2, (GraphicsDevice.Viewport.Height - _loadingTexture.Height) / 2), Color.White);
-            }
+        {
+            float scale = 0.5f; // Define a escala para redimensionar a textura
+        Vector2 scaledSize = new Vector2(_loadingTexture.Width * scale, _loadingTexture.Height * scale);
+        Vector2 position = new Vector2(
+            (GraphicsDevice.Viewport.Width - scaledSize.X) / 2, 
+            (GraphicsDevice.Viewport.Height - scaledSize.Y) / 2
+        );
+        _spriteBatch.Draw(_loadingTexture, position, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+    }
 
             _spriteBatch.End();
 

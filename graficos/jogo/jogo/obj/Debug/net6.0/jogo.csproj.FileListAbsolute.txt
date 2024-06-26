@@ -26,3 +26,4 @@ C:\Users\anake\OneDrive\Documentos\GitHub\eu\.vscode\nexusnumber\graficos\jogo\j
 C:\Users\anake\OneDrive\Documentos\GitHub\eu\.vscode\nexusnumber\graficos\jogo\jogo\obj\Debug\net6.0\jogo.pdb
 C:\Users\anake\OneDrive\Documentos\GitHub\eu\.vscode\nexusnumber\graficos\jogo\jogo\obj\Debug\net6.0\jogo.genruntimeconfig.cache
 C:\Users\anake\OneDrive\Documentos\GitHub\eu\.vscode\nexusnumber\graficos\jogo\jogo\obj\Debug\net6.0\ref\jogo.dll
+C:\Users\anake\OneDrive\Documentos\GitHub\eu\.vscode\nexusnumber\graficos\jogo\jogo\bin\Debug\net6.0\Content\carregamento.xnb
