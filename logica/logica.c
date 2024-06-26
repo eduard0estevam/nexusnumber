@@ -39,21 +39,29 @@ void salvarPontuacao(char nome[], int pontos);
 void carregarPontuacoesAltas();
 void exibirPontuacoesAltas();
 
-// Função principal exportada
-__declspec(dllexport) void iniciarJogo(char* nomeJogador, char nivelDoJogo) {
+// Função principal
+int main() {
+    char nomeJogador[50];
+    char nivelDoJogo;
+
+    printf("\n\n\n\n                                                  Bem-vindo ao Nexus Number!\n\n");
+    printf("Insira seu nome: ");
+    fgets(nomeJogador, sizeof(nomeJogador), stdin);
+    nomeJogador[strcspn(nomeJogador, "\n")] = '\0'; // Remover o '\n' do final da string lida
+
     vidas = 3;
     pontos = 0;
 
     srand(time(NULL));
 
-    printf("\n\n\n\n                                                  Bem-vindo ao Nexus Number!\n\n");
-    printf("Insira seu nome: %s\n", nomeJogador);
-    esperar(2);
+    nivelDoJogo = exibirMenuNivel();
     limparTela();
     executarJogo(nivelDoJogo);
     printf("\n%s, sua pontuacao final eh: %d\n", nomeJogador, pontos);
     salvarPontuacao(nomeJogador, pontos);
     pontos = 0; // Resetar a pontuação para o próximo jogo
+
+    return 0;
 }
 
 void limparTela() {

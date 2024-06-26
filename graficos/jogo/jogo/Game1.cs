@@ -18,6 +18,8 @@ namespace jogo
         private bool _isLoading; // Variável para controlar se a tela de carregamento está ativa
         private float _loadingTimer; // Timer para controlar o tempo de exibição da tela de carregamento
         private const float LoadingTime = 15f; // Tempo de carregamento em segundos
+        
+        [DllImport("logica.dll", CallingConvention = CallingConvention.Cdecl)]
 
         // Campos específicos para a barra de carregamento animada
         private Texture2D _loadingBarBackgroundTexture; // Textura do fundo da barra de carregamento
