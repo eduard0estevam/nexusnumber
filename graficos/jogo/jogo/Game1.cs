@@ -1,4 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
+using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -16,6 +18,9 @@ namespace jogo
         private bool _isLoading; // Variável para controlar se a tela de carregamento está ativa
         private float _loadingTimer; // Timer para controlar o tempo de exibição da tela de carregamento
         private const float LoadingTime = 15f; // Tempo de carregamento em segundos
+
+        [DllImport("logica.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void iniciarJogo(string nomeJogador, char nivelDoJogo);
 
         public Game1()
         {

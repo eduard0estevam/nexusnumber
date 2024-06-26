@@ -39,40 +39,21 @@ void salvarPontuacao(char nome[], int pontos);
 void carregarPontuacoesAltas();
 void exibirPontuacoesAltas();
 
-int main() {
-    char escolhaMenu;
-    char nivelDoJogo;
-    char nomeJogador[50];
+// Função principal exportada
+__declspec(dllexport) void iniciarJogo(char* nomeJogador, char nivelDoJogo) {
+    vidas = 3;
+    pontos = 0;
 
-    srand(time(NULL)); // Inicialização do gerador de números aleatórios
+    srand(time(NULL));
 
-    while (1) {
-        escolhaMenu = exibirMenuPrincipal();
-
-        if (escolhaMenu == '1') {
-            limparTela();
-            printf("\n\n\n\n                                                  Bem-vindo ao Nexus Number!\n\n");
-            printf("Insira seu nome: ");
-            fgets(nomeJogador, sizeof(nomeJogador), stdin);
-            nomeJogador[strcspn(nomeJogador, "\n")] = '\0'; // Remover o '\n' do final da string lida
-            esperar(2);
-            limparTela();
-            nivelDoJogo = exibirMenuNivel();
-            executarJogo(nivelDoJogo);
-            printf("\n%s, sua pontuacao final eh: %d\n", nomeJogador, pontos);
-            salvarPontuacao(nomeJogador, pontos);
-            pontos = 0; // Resetar a pontuação para o próximo jogo
-        } else if (escolhaMenu == '2') {
-            limparTela();
-            exibirPontuacoesAltas();
-            esperar(5);
-            limparTela();
-        } else if (escolhaMenu == '3') {
-            exit(0);
-        }
-    }
-
-    return 0;
+    printf("\n\n\n\n                                                  Bem-vindo ao Nexus Number!\n\n");
+    printf("Insira seu nome: %s\n", nomeJogador);
+    esperar(2);
+    limparTela();
+    executarJogo(nivelDoJogo);
+    printf("\n%s, sua pontuacao final eh: %d\n", nomeJogador, pontos);
+    salvarPontuacao(nomeJogador, pontos);
+    pontos = 0; // Resetar a pontuação para o próximo jogo
 }
 
 void limparTela() {
@@ -113,12 +94,10 @@ void executarJogo(char nivelDoJogo) {
             nivelDificil(&vidas);
             break;
         default:
-            // Nada acontece se o nível não for 1, 2 ou 3 //
+            // Nada acontece se o nível não for 1, 2 ou 3
             break;
     }
     printf("Jogo terminado! Sua pontuacao final eh: %d\n", pontos);
-    // Não precisa salvar aqui, já está sendo salvo após exibir a pontuação final
-    // salvarPontuacao(pontos);
     pontos = 0; // Resetar a pontuação para o próximo jogo
 }
 
@@ -198,7 +177,7 @@ void nivelFacil(int *vidas) {
 void nivelMedio(int *vidas) {
     Questao questoes[] = {
         {"Pergunta 1:\nEm um saco ha 5 bolas vermelhas, 4 bolas azuis e 3 bolas verdes. Qual a probabilidade de se retirar uma bola azul?", "1/3"},
-        {"Pergunta 2:\nSe o dobro de um número eh 24, qual é a metade desse número?", "12"},
+        {"Pergunta 2:\nSe o dobro de um número eh 24, qual eh a metade desse numero?", "12"},
         {"Pergunta 3:\nSe 5 maquinas podem completar um trabalho em 8 horas, quantas horas levarao 8 maquinas para completar o mesmo trabalho?", "5"},
         {"Pergunta 4:\nUm produto custa R$ 120,00. Apos um desconto de 25%%, qual eh o novo preco?", "90"},
         {"Pergunta 5:\nQual eh a soma de 1/3 e 1/4?", "7/12"},
@@ -209,9 +188,9 @@ void nivelMedio(int *vidas) {
 
 void nivelDificil(int *vidas) {
     Questao questoes[] = {
-        {"Pergunta 1:\nDois caracois estao se movendo em direcao a um jardim. O primeiro caracol percorre 30 metros por dia e leva 16 dias para chegar ao jardim. O segundo caracol se move a uma velocidade de 20 metros por dia. Após quantos dias o segundo caracol alcançara o jardim, considerando que o primeiro caracol ja está la?", "8"},
-        {"Pergunta 2:\nEm um sistema de codificacao, AB representa os algarismos do dia do nascimento de uma pessoa e CD os algarismos de seu mes de nascimento. Qual eh o mes de nascimento dessa pessoa se a data for trinta de julho?", "07"},
-        {"Pergunta 3:\nSe 3 gatos caçam 3 ratos em 3 minutos, em quantos minutos levarao 100 gatos para cacar 100 ratos?", "3"},
+        {"Pergunta 1:\n9, 16 = 7\n4, 36 = 8\n121, 81 = 20\n 25, 49 = ?", "12"},
+        {"Pergunta 2:\nEm um sistema de codificação, AB representa os algarismos do dia do nascimento de uma pessoa e CD os algarismos de seu mês de nascimento. Qual eh o mês de nascimento dessa pessoa se a data for trinta de julho?", "07"},
+        {"Pergunta 3:\nSe 3 gatos caçam 3 ratos em 3 minutos, em quantos minutos levarão 100 gatos para caçar 100 ratos?", "3"},
         {"Pergunta 4:\nUm carro viaja a 60 km/h. Em quantas horas levará para percorrer 180 km?", "3"},
         {"Pergunta 5:\nSe a=1, b=2, c=3, ..., z=26, qual eh a soma das letras da palavra CAT?", "24"},
     };
@@ -261,7 +240,6 @@ void exibirPontuacoesAltas() {
     carregarPontuacoesAltas();
 }
 
-// Implementação da função de comparação para ordenação decrescente
 int compararDecrescente(const void *a, const void *b) {
     const Pontuacao *pontuacaoA = (const Pontuacao *)a;
     const Pontuacao *pontuacaoB = (const Pontuacao *)b;
