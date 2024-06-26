@@ -46,7 +46,7 @@
 /processorParam:TextureFormat=Color
 /build:carregamento.png
 
-#begin barracarregament.png
+#begin barracarregamento.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255

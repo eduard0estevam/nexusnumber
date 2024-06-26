@@ -49,7 +49,7 @@ namespace jogo
             _font = Content.Load<SpriteFont>("File");
             _backgroundTexture = Content.Load<Texture2D>("backgroun2");
             _loadingTexture = Content.Load<Texture2D>("carregamento"); // Carrega a textura da tela de carregamento
-             _loadingBarBackgroundTexture = Content.Load<Texture2D>("loadingBarBackground");
+             _loadingBarBackgroundTexture = Content.Load<Texture2D>("barracarregamento");
 
             // Carrega os frames da animação
         _loadingBarFillFrames = new Texture2D[3]; // Suponha que existam 3 frames na animação
@@ -114,6 +114,13 @@ namespace jogo
             _previousMouseState = currentMouseState;
             base.Update(gameTime);
         }
+
+        private void UpdateLoadingAnimation()
+{
+    // Lógica para atualizar a animação da barra de carregamento
+    // Exemplo simples: avança para o próximo frame com o tempo
+    _currentAnimationFrame = (int)(_progress * (_loadingBarFillFrames.Length - 1));
+}
 
         private void UpdateMainMenu(MouseState currentMouseState)
         {
@@ -206,6 +213,19 @@ namespace jogo
 
             base.Draw(gameTime);
         }
+
+        private void DrawLoadingBar()
+{
+    // Posição e escala da barra de carregamento
+    Vector2 position = new Vector2(100, 500); // Exemplo de posição, ajuste conforme necessário
+    float scale = 1.0f; // Exemplo de escala, ajuste conforme necessário
+
+    // Desenha o fundo da barra de carregamento
+    _spriteBatch.Draw(_loadingBarBackgroundTexture, position, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+
+    // Desenha a parte preenchida da barra de carregamento com base na animação
+    _spriteBatch.Draw(_loadingBarFillFrames[_currentAnimationFrame], position, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+}
 
         private void DrawMainMenu()
         {
