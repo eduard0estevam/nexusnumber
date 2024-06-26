@@ -48,7 +48,7 @@ namespace jogo
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _font = Content.Load<SpriteFont>("File");
             _backgroundTexture = Content.Load<Texture2D>("backgroun2");
-            _loadingTexture = Content.Load<Texture2D>("carregamento"); // Carrega a textura da tela de carregamento
+            _loadingTexture = Content.Load<Texture2D>("carregamento2"); // Carrega a textura da tela de carregamento
             _loadingBarBackgroundTexture = Content.Load<Texture2D>("barracarregamento");
 
             // Carrega os frames da animação
@@ -201,7 +201,7 @@ namespace jogo
             // Se estiver carregando, desenha a tela de carregamento
             if (_isLoading)
             {
-                float scale = 0.4f; // Define a escala para redimensionar a textura
+                float scale = 0.3f; // Define a escala para redimensionar a textura
                 Vector2 scaledSize = new Vector2(_loadingTexture.Width * scale, _loadingTexture.Height * scale);
                 Vector2 position = new Vector2(
                     (GraphicsDevice.Viewport.Width - scaledSize.X) / 2,

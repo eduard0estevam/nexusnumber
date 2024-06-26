@@ -24,10 +24,10 @@
 /fontoutput:Texture2D
 /build:File.spritefont
 
-#begin carregamento.png
+#begin carregamento2.png
 /importer:TextureImporter
 /processor:TextureProcessor
-/build:carregamento.png
+/build:carregamento2.png
 
 #begin barracarregamento.png
 /importer:TextureImporter
