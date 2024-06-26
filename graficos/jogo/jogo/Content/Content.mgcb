@@ -14,15 +14,16 @@
 #---------------------------------- Content ---------------------------------#
 
 #begin backgroun2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
+/importer:TextureImporter //Define o tipo de importador para o arquivo, neste caso, uma textura.
+/processor:TextureProcessor //Define o tipo de processador para a textura.
+/processorParam:ColorKeyColor=255,0,255,255 //Especifica a cor chave para transparência (no caso, verde transparente).
+/processorParam:ColorKeyEnabled=True //Habilita a utilização da cor chave para transparência
+/processorParam:GenerateMipmaps=False //Indica se deve gerar mipmaps para a textura (aqui configurado para não gerar).
+/processorParam:PremultiplyAlpha=True //Especifica se o alpha deve ser pré-multiplicado
+/processorParam:PremultiplyAlpha=True 
+/processorParam:ResizeToPowerOfTwo=False //Determina se a textura deve ser redimensionada para uma potência de dois.
+/processorParam:MakeSquare=False // Especifica se a textura deve ser forçada a ser quadrada.
+/processorParam:TextureFormat=Color //Define o formato da textura como cor
 /build:backgroun2.png
 #end
 
@@ -57,3 +58,42 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:barracarregamento.png
+
+#begin loadingBarFill_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:loadingBarFill_0.png
+#end
+
+#begin loadingBarFill_1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:loadingBarFill_1.png
+#end
+
+#begin loadingBarFill_2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:loadingBarFill_2.png
+#end

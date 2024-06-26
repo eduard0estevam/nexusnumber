@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
+using System.Runtime.InteropServices;
 
 namespace jogo
 {
@@ -19,14 +19,12 @@ namespace jogo
         private float _loadingTimer; // Timer para controlar o tempo de exibição da tela de carregamento
         private const float LoadingTime = 15f; // Tempo de carregamento em segundos
 
-        [DllImport("logica.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void iniciarJogo(string nomeJogador, char nivelDoJogo);/ Campos específicos para a barra de carregamento animada
+        // Campos específicos para a barra de carregamento animada
         private Texture2D _loadingBarBackgroundTexture; // Textura do fundo da barra de carregamento
         private Texture2D[] _loadingBarFillFrames; // Array de texturas para os frames da animação
         private float _progress; // Progresso do carregamento (de 0 a 1)
         private int _currentAnimationFrame; // Índice do frame atual da animação
         private const float AnimationSpeed = 0.1f; // Velocidade de animação da barra de carregamento
-
 
         public Game1()
         {
@@ -49,17 +47,16 @@ namespace jogo
             _font = Content.Load<SpriteFont>("File");
             _backgroundTexture = Content.Load<Texture2D>("backgroun2");
             _loadingTexture = Content.Load<Texture2D>("carregamento"); // Carrega a textura da tela de carregamento
-             _loadingBarBackgroundTexture = Content.Load<Texture2D>("barracarregamento");
+            _loadingBarBackgroundTexture = Content.Load<Texture2D>("barracarregamento");
 
             // Carrega os frames da animação
-        _loadingBarFillFrames = new Texture2D[3]; // Suponha que existam 3 frames na animação
-        for (int i = 0; i < _loadingBarFillFrames.Length; i++)
-        {
-            _loadingBarFillFrames[i] = Content.Load<Texture2D>($"loadingBarFill_{i}");
-        }
+            _loadingBarFillFrames = new Texture2D[3]; // Suponha que existam 3 frames na animação
+            for (int i = 0; i < _loadingBarFillFrames.Length; i++)
+            {
+                _loadingBarFillFrames[i] = Content.Load<Texture2D>($"loadingBarFill_{i}");
+            }
 
-        _currentAnimationFrame = 0; // Começa com o primeiro frame da animação
-    }
+            _currentAnimationFrame = 0; // Começa com o primeiro frame da animação
         }
 
         protected override void Update(GameTime gameTime)
@@ -116,11 +113,11 @@ namespace jogo
         }
 
         private void UpdateLoadingAnimation()
-{
-    // Lógica para atualizar a animação da barra de carregamento
-    // Exemplo simples: avança para o próximo frame com o tempo
-    _currentAnimationFrame = (int)(_progress * (_loadingBarFillFrames.Length - 1));
-}
+        {
+            // Lógica para atualizar a animação da barra de carregamento
+            // Exemplo simples: avança para o próximo frame com base no progresso
+            _currentAnimationFrame = (int)(_progress * (_loadingBarFillFrames.Length - 1));
+        }
 
         private void UpdateMainMenu(MouseState currentMouseState)
         {
@@ -153,21 +150,21 @@ namespace jogo
                     // Mostra a tela de carregamento ao selecionar a dificuldade "Fácil"
                     _isLoading = true;
                     _loadingTimer = 0f;
-                    // Você pode adicionar lógica adicional aqui para iniciar o jogo com a dificuldade fácil
+                    // Lógica adicional para iniciar o jogo com a dificuldade fácil
                 }
                 else if (mediumButton.Contains(currentMouseState.Position))
                 {
                     // Mostra a tela de carregamento ao selecionar a dificuldade "Médio"
                     _isLoading = true;
                     _loadingTimer = 0f;
-                    // Lógica para iniciar o jogo com a dificuldade média
+                    // Lógica adicional para iniciar o jogo com a dificuldade média
                 }
                 else if (hardButton.Contains(currentMouseState.Position))
                 {
                     // Mostra a tela de carregamento ao selecionar a dificuldade "Difícil"
                     _isLoading = true;
                     _loadingTimer = 0f;
-                    // Lógica para iniciar o jogo com a dificuldade difícil
+                    // Lógica adicional para iniciar o jogo com a dificuldade difícil
                 }
             }
         }
@@ -177,13 +174,15 @@ namespace jogo
             _spriteBatch.Begin();
 
             // Desenha o fundo preto se estiver carregando ou durante as fases do jogo
-    if (_isLoading || _currentGameState == GameState.Playing)
-    {
-        _spriteBatch.Draw(_backgroundTexture, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.Black);
-    }
-    else {
-            _spriteBatch.Draw(_backgroundTexture, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
-         }
+            if (_isLoading || _currentGameState == GameState.Playing)
+            {
+                _spriteBatch.Draw(_backgroundTexture, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.Black);
+            }
+            else
+            {
+                _spriteBatch.Draw(_backgroundTexture, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
+            }
+
             switch (_currentGameState)
             {
                 case GameState.MainMenu:
@@ -199,15 +198,18 @@ namespace jogo
 
             // Se estiver carregando, desenha a tela de carregamento
             if (_isLoading)
-        {
-            float scale = 0.5f; // Define a escala para redimensionar a textura
-        Vector2 scaledSize = new Vector2(_loadingTexture.Width * scale, _loadingTexture.Height * scale);
-        Vector2 position = new Vector2(
-            (GraphicsDevice.Viewport.Width - scaledSize.X) / 2, 
-            (GraphicsDevice.Viewport.Height - scaledSize.Y) / 2
-        );
-        _spriteBatch.Draw(_loadingTexture, position, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
-    }
+            {
+                float scale = 0.4f; // Define a escala para redimensionar a textura
+                Vector2 scaledSize = new Vector2(_loadingTexture.Width * scale, _loadingTexture.Height * scale);
+                Vector2 position = new Vector2(
+                    (GraphicsDevice.Viewport.Width - scaledSize.X) / 2,
+                    (GraphicsDevice.Viewport.Height - scaledSize.Y) / 2
+                );
+                _spriteBatch.Draw(_loadingTexture, position, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+
+                // Desenha a barra de carregamento sobre a tela de carregamento
+                DrawLoadingBar();
+            }
 
             _spriteBatch.End();
 
@@ -215,17 +217,17 @@ namespace jogo
         }
 
         private void DrawLoadingBar()
-{
-    // Posição e escala da barra de carregamento
-    Vector2 position = new Vector2(100, 500); // Exemplo de posição, ajuste conforme necessário
-    float scale = 1.0f; // Exemplo de escala, ajuste conforme necessário
+        {
+            // Posição e escala da barra de carregamento
+            Vector2 position = new Vector2(100, 500); // Exemplo de posição, ajuste conforme necessário
+            float scale = 1.0f; // Exemplo de escala, ajuste conforme necessário
 
-    // Desenha o fundo da barra de carregamento
-    _spriteBatch.Draw(_loadingBarBackgroundTexture, position, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            // Desenha o fundo da barra de carregamento
+            _spriteBatch.Draw(_loadingBarBackgroundTexture, position, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
 
-    // Desenha a parte preenchida da barra de carregamento com base na animação
-    _spriteBatch.Draw(_loadingBarFillFrames[_currentAnimationFrame], position, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
-}
+            // Desenha a parte preenchida da barra de carregamento com base na animação
+            _spriteBatch.Draw(_loadingBarFillFrames[_currentAnimationFrame], position, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+        }
 
         private void DrawMainMenu()
         {
