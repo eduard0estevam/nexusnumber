@@ -12,7 +12,7 @@ int main(void)
     Font customFont = LoadFont("Daydream.ttf");
 
     // Carrega a imagem de fundo
-    Texture2D background = LoadTexture("backgroun2.png");
+    Texture2D background = LoadTexture("background1.png");
 
     // Define as cores
     Color textColor = WHITE;
@@ -49,6 +49,7 @@ int main(void)
 
         // Desenho da tela
         BeginDrawing();
+        
         ClearBackground(RAYWHITE);
 
         // Desenha a imagem de fundo
