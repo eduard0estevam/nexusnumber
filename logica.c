@@ -19,6 +19,7 @@ int dificuldade_jogo; //dificuldade do jogo a ser escolhida pelo jogador
 int i;
 
 // Protótipos das funções iniciais do game
+// eles servem para voce conseguir  organizar as funções
 void limparTela();
 void esperar(int segundos);
 char exibirMenuPrincipal();
@@ -109,17 +110,19 @@ void executarJogo(char nivelDoJogo) {
     salvarPontuacao(pontos);
     pontos = 0; // Resetar a pontuação para o próximo jogo
 }
-
+// vai pegar os endereços e com o ponteiro vai pegar o conteudo do endero a(questoes[i]) e do endereço b(questoes[variavelrandomica])
 void trocar(Questao *a, Questao *b) {
     Questao temp = *a;
     *a = *b;
     *b = temp;
 }
-
+// vai puchar uma função do nivel selecionado e vai passar array ( sequencia de dados) e o int n vai pegar o tamanho do array 
 void embaralhar(Questao questoes[], int n) {
+    // o for vai rodar todas as questões do nivel selecionado.
     for (int i = n - 1; i > 0; i--) {
-        int j = rand() % (i + 1);
-        trocar(&questoes[i], &questoes[j]);
+        int variavelrandomica = rand() % (i + 1);
+        // vai chamar a função troca  e vai passar para a função trocar os endereçõs das questoes que serão trocadas.
+        trocar(&questoes[i], &questoes[variavelrandomica]);
     }
 }
 
