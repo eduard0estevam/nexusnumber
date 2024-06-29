@@ -1,3 +1,5 @@
+// logica.h
+
 #ifndef LOGICA_H
 #define LOGICA_H
 
@@ -5,6 +7,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include "raylib.h"
+#include "questoes_main.c"
 
 // Estrutura para armazenar perguntas e respostas
 typedef struct {
