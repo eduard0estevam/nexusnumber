@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <conio.h>
 #include <string.h>
+#include <locale.h>
 
 // Estrutura para armazenar perguntas e respostas
 typedef struct {
@@ -14,7 +15,6 @@ typedef struct {
 // Variáveis globais
 int vidas = 3; //quantidade de vidas
 int pontos = 0; //pontuação a ser acumulada pelo jogador
-int tentativas = 1;//numero de tentativas
 int dificuldade_jogo; //dificuldade do jogo a ser escolhida pelo jogador 
 int i;
 
@@ -37,6 +37,7 @@ void exibirPontuacoesAltas();
 
 int main() {
     char escolhaMenu;
+    setlocale(LC_ALL,"Portuguese");
     char nivelDoJogo;
 
     srand(time(NULL));
@@ -105,10 +106,12 @@ void executarJogo(char nivelDoJogo) {
         default:
             // Nada acontece se o nível não for 1, 2 ou 3 //
             break;
+
     }
     printf("Jogo terminado! Sua pontuacao final eh: %d\n", pontos);
     salvarPontuacao(pontos);
     pontos = 0; // Resetar a pontuação para o próximo jogo
+    vidas = 3 ;
 }
 // vai pegar os endereços e com o ponteiro vai pegar o conteudo do endero a(questoes[i]) e do endereço b(questoes[variavelrandomica])
 void trocar(Questao *a, Questao *b) {
@@ -178,7 +181,7 @@ void nivelfacil(int *vidas) {
         {"Pergunta 4:\nQual eh o proximo número na sequência: 1, 4, 9, 16, 25, ...?", "36"},
         {"Pergunta 5:\nJoao tem o dobro da idade de Pedro. Se a diferenca de suas idades eh de 15 anos, quantos anos Joao tem?", "30"},
         {"Pergunta 6:\n4, 8 e 16: Qual eh o proximo numero?", "32"},
-        {"Pergunta 7:\n + B = 60\nA - B = 40\n A / B = ?", "5"},
+        {"Pergunta 7:\n A+ B = 60\nA - B = 40\n A / B = ?", "5"},
         {"Pergunta 8:\nEm um quadrado formado por 16 palitos, com quantos palitos eu posso fazer 2 quadrados ?", "4"},
         {"Pergunta 9:\nA média aritmetica de cinco numeros é 12. Se um dos numeros é 16, qual eh a media dos outros quatro números?", "11"},
         {"Pergunta 10:\n6 = 30\n 3 = 15\n 7 = 35\n 2 = ?", "10"},
