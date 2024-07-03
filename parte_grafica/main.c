@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
@@ -9,12 +8,6 @@ typedef struct {
     char pergunta[256];
     char resposta[256];
 } Questao;
-
-// Estrutura para armazenar pontuação com nome do jogador
-typedef struct {
-    char nome[50];
-    int pontuacao;
-} Pontuacao;
 
 // Funções auxiliares
 void trocar(Questao *a, Questao *b) {
@@ -30,37 +23,55 @@ void embaralhar(Questao questoes[], int n) {
     }
 }
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 450
+#define SCREEN_WIDTH 1000
+#define SCREEN_HEIGHT 650
 
-void dividirTextoEmLinhas(char *texto, char *textoFormatado, int larguraMaxima, Font font, int tamanhoFonte) {
-    int larguraAtual = 0;
-    int tamPalavra = 0;
-    char palavra[256];
-    char linha[1024] = "";
-    char tempTexto[256];
-    strcpy(tempTexto, texto); // Criar uma cópia para não modificar o texto original
-    char *ptrPalavra = strtok(tempTexto, " ");
-    
-    while (ptrPalavra != NULL) {
-        tamPalavra = MeasureTextEx(font, ptrPalavra, tamanhoFonte, 2).x;
+void MenuPrincipal(Font customFont, Texture2D background, Rectangle enterButton, Rectangle exitButton, Color enterButtonColor, Color enterButtonTextColor, Color exitButtonColor, Color exitButtonTextColor, Color titleColor) {
+    DrawTexture(background, 0, 0, WHITE);
+    DrawTextEx(customFont, "NexusNumber", (Vector2){SCREEN_WIDTH / 2 - 230, 170}, 50, 2, titleColor);
+    DrawRectangleRec(enterButton, enterButtonColor);
+    DrawTextEx(customFont, "Entrar", (Vector2){enterButton.x + 30, enterButton.y + 10}, 30, 2, enterButtonTextColor);
+    DrawRectangleRec(exitButton, exitButtonColor);
+    DrawTextEx(customFont, "Sair", (Vector2){exitButton.x + 50, exitButton.y + 10}, 30, 2, exitButtonTextColor);
+}
 
-        if (larguraAtual + tamPalavra >= larguraMaxima) {
-            strcat(linha, "\n");
-            strcat(textoFormatado, linha);
-            strcpy(linha, "");
-            larguraAtual = 0;
+void Carregando(Font customFont, Texture2D loadingImage, Color titleColor) {
+    ClearBackground(BLACK);
+    DrawTexture(loadingImage, (SCREEN_WIDTH - loadingImage.width) / 2, (SCREEN_HEIGHT - loadingImage.height) / 2, WHITE);
+    DrawTextEx(customFont, "Carregando...", (Vector2){SCREEN_WIDTH / 2 - 155, SCREEN_HEIGHT / 2 + 240}, 40, 2, titleColor);
+}
+
+void MostrarNiveis(Font customFont, Texture2D background, Rectangle easyButton, Rectangle mediumButton, Rectangle hardButton, Color levelButtonColor, Color levelButtonTextColor, Color titleColor) {
+    DrawTexture(background, 0, 0, WHITE);
+    DrawTextEx(customFont, "Escolha o Nivel", (Vector2){SCREEN_WIDTH / 2 - 250, 160}, 40, 2, titleColor);
+    DrawRectangleRec(easyButton, levelButtonColor);
+    DrawTextEx(customFont, "Facil", (Vector2){easyButton.x + 45, easyButton.y + 10}, 30, 2, levelButtonTextColor);
+    DrawRectangleRec(mediumButton, levelButtonColor);
+    DrawTextEx(customFont, "Medio", (Vector2){mediumButton.x + 45, mediumButton.y + 10}, 30, 2, levelButtonTextColor);
+    DrawRectangleRec(hardButton, levelButtonColor);
+    DrawTextEx(customFont, "Dificil", (Vector2){hardButton.x + 36, hardButton.y + 10}, 30, 2, levelButtonTextColor);
+}
+
+void MostrarPergunta(Font customFont, Font chalkboyFont, Texture2D background, Questao questoes[], int perguntaAtual, char respostaUsuario[], Color textColor) {
+    ClearBackground(RAYWHITE);
+    DrawTexture(background, 0, 0, WHITE);
+    DrawTextEx(chalkboyFont, questoes[perguntaAtual].pergunta, (Vector2){50, 100}, 30, 2, textColor);
+    DrawTextEx(customFont, "Sua resposta:", (Vector2){50, 300}, 30, 2, textColor);
+    DrawTextEx(customFont, respostaUsuario, (Vector2){50, 350}, 30, 2, textColor);
+
+    // Captura a resposta do usuário
+    int key = GetCharPressed();
+    while (key > 0) {
+        if (key >= 32 && key <= 125 && strlen(respostaUsuario) < 255) {
+            int len = strlen(respostaUsuario);
+            respostaUsuario[len] = (char)key;
+            respostaUsuario[len + 1] = '\0';
         }
-
-        strcat(linha, ptrPalavra);
-        strcat(linha, " ");
-        larguraAtual += tamPalavra + MeasureTextEx(font, " ", tamanhoFonte, 2).x;
-
-        ptrPalavra = strtok(NULL, " ");
+        key = GetCharPressed();
     }
-
-    // Adicionar a última linha
-    strcat(textoFormatado, linha);
+    if (IsKeyPressed(KEY_BACKSPACE) && strlen(respostaUsuario) > 0) {
+        respostaUsuario[strlen(respostaUsuario) - 1] = '\0';
+    }
 }
 
 int main(void) {
@@ -68,21 +79,27 @@ int main(void) {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "NexusNumber");
 
     // Carrega a fonte customizada
-    Font customFont = LoadFont("Daydream.ttf");
+    Font customFont = LoadFont("04B_30__.TTF");
+    Font chalkboyFont = LoadFontEx("Neat Chalk.ttf", 30, NULL, 0); // Fonte para o nível fácil, medio e dificil
 
-    // Carrega as imagens de fundo
-    Texture2D background = LoadTexture("./imagens/background2.png");
-    Texture2D kelryImage = LoadTexture("./imagens/kelry.png");
+    // Carrega as imagens de fundo e a imagem de carregamento
+    Texture2D background = LoadTexture("./imagens/menu.png");
     Texture2D easyBackground = LoadTexture("./imagens/facil.png");
+    Texture2D loadingImage = LoadTexture("./imagens/carregamento.png"); // Nova textura de carregamento
+    Texture2D mediumBackground = LoadTexture("./imagens/medio.png");
+    Texture2D hardBackground = LoadTexture("./imagens/hard11.png");
 
     // Define as cores
     Color textColor = WHITE;
-    Color enterButtonColor = GREEN;
-    Color enterButtonTextColor = BLACK;
-    Color exitButtonColor = VIOLET;
-    Color exitButtonTextColor = BLACK;
-    Color levelButtonColor = ORANGE;
-    Color levelButtonTextColor = BLACK;
+    Color enterButtonColor = PINK;
+    Color enterButtonTextColor = WHITE;
+    Color exitButtonColor = PINK;
+    Color exitButtonTextColor = WHITE;
+    Color levelButtonColor = PINK;
+    Color levelButtonTextColor = WHITE;
+
+    // Define a cor do título NexusNumber usando hexadecimal #E91E63
+    Color titleColor = (Color){233, 30, 99, 255};
 
     // Define as variáveis para os botões
     Rectangle enterButton = { SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 50, 200, 50 };
@@ -98,27 +115,45 @@ int main(void) {
     bool loading = false;
     bool loadingComplete = false;
     int selectedLevel = 0;
-    int loadingTimer = 0;
+    float loadingTimer = 0;
 
     // Variáveis para o jogo
     int vidas = 3;
     int pontos = 0;
-    Questao questoesFaceis[10] = {
-        {"Pergunta 1:\n2, 6, 12, 20, 30, ? Qual eh o próximo número na sequencia?", "42"},
-        {"Pergunta 2:\nA soma das idades de Ana e Bia eh 44. Ana eh 8 anos mais velha que Bia. Qual eh a idade de Ana?", "26"},
+    Questao questoesFaceis[10] = { 
+        {"Pergunta 1:\n2, 6, 12, 20, 30, ? Qual eh o pr0ximo\n numero na sequencia?", "42"},
+        {"Pergunta 2:\nA soma das idades de Ana e Bia eh 44. Ana eh 8 anos mais velha que Bia. Qual\n eh a idade de Ana?", "26"},
         {"Pergunta 3:\n13, 18 = 31\n7, 25 = 32\n12, 30 = 42\n26, 13 = ?", "39"},
-        {"Pergunta 4:\nQual eh o proximo numero na sequencia: 1, 4, 9, 16, 25, ...?", "36"},
-        {"Pergunta 5:\nJoao tem o dobro da idade de Pedro. Se a diferença de suas idades eh de 15 anos, quantos anos Joao tem?", "30"},
+        {"Pergunta 4:\nQual eh o proximo numero na sequencia\n: 1, 4, 9, 16, 25, ...?\n", "36"},
+        {"Pergunta 5:\nJoao tem o dobro da idade de Pedro.\n Se a diferença\n de suas idades eh de 15 anos, quantos\n anos Joao tem?", "30"},
         {"Pergunta 6:\n4, 8 e 16: Qual eh o proximo numero?", "32"},
         {"Pergunta 7:\n + B = 60\nA - B = 40\n A / B = ?", "5"},
-        {"Pergunta 8:\nEm um quadrado formado por 16 palitos, com quantos palitos eu posso fazer 2 quadrados ?", "4"},
-        {"Pergunta 9:\nA media aritmetica de cinco numeros eh 12. Se um dos numeros eh 16, qual eh a media dos outros quatro numeros?", "11"},
+        {"Pergunta 8:\nEm um quadrado formado por 16 palitos, com \nquantos palitos eu posso fazer 2 quadrados ?", "4"},
+        {"Pergunta 9:\nA media aritmetica de cinco numeros eh 12.\n Se um dos numeros eh 16, qual\n eh a media dos outros\n quatro numeros?", "11"},
         {"Pergunta 10:\n6 = 30\n 3 = 15\n 7 = 35\n 2 = ?", "10"},
     };
+    Questao questoesMedias[5] =  {
+        {"Pergunta 1:\nEm um saco ha 5 bolas vermelhas, 4 bolas azuis e 3 bolas verdes. Qual a probabilidade de se retirar uma bola azul?", "1/3"},
+        {"Pergunta 2:\nSe o dobro de um número eh 24, qual eh a metade desse numero?", "12"},
+        {"Pergunta 3:\nSe 5 maquinas podem completar um trabalho em 8 horas, quantas horas levarao 8 maquinas para completar o mesmo trabalho?", "5"},
+        {"Pergunta 4:\nUm produto custa R$ 120,00. Apos um desconto de 25%, qual eh o novo preco?", "90"},
+        {"Pergunta 5:\nQual eh a soma de 1/3 e 1/4?", "7/12"},
+    };
+    Questao questoesDificeis[5] = {
+        {"Pergunta 1:\n9, 16 = 7\n4, 36 = 8\n121, 81 = 20\n 25, 49 = ?", "12"},
+        {"Pergunta 2:\nEm um sistema de codificação, AB representa os algarismos do dia do nascimento de uma pessoa e CD os algarismos de seu mês de nascimento. Qual eh o mês de nascimento dessa pessoa se a data for trinta de julho?", "07"},
+        {"Pergunta 3:\nSe 3 gatos caçam 3 ratos em 3 minutos, em quantos minutos levarão 100 gatos para caçar 100 ratos?", "3"},
+        {"Pergunta 4:\nUm carro viaja a 60 km/h. Em quantas horas levará para percorrer 180 km?", "3"},
+        {"Pergunta 5:\nSe a=1, b=2, c=3, ..., z=26, qual eh a soma das letras da palavra CAT?", "24"},
+    };
+    
     int perguntaAtual = 0;
     char respostaUsuario[256] = {0};
     bool respostaCorreta = false;
     bool mostrandoPergunta = false;
+
+    // Seed para a função rand()
+    srand(time(NULL));
 
     while (!WindowShouldClose() && !exitGame) {
         // Verifica se o botão "Entrar" foi clicado
@@ -138,8 +173,8 @@ int main(void) {
 
         // Verifica se o tempo de "Carregando..." acabou
         if (loading && !loadingComplete) {
-            int currentTime = GetTime();
-            if (currentTime - loadingTimer >= 5) { // Mostra "Carregando..." por 5 segundos
+            float currentTime = GetTime();
+            if (currentTime - loadingTimer >= 5.0f) { // Mostra "Carregando..." por 5 segundos
                 loading = false;
                 showingLevelButtons = true; // Mostra os botões de nível após o carregamento
                 loadingComplete = true; // Marca o carregamento como completo
@@ -158,109 +193,88 @@ int main(void) {
             }
             else if (CheckCollisionPointRec(mousePoint, mediumButton)) {
                 selectedLevel = 2; // Médio
-                // Defina a lógica do nível médio aqui
+                background = mediumBackground; // Muda o fundo para o nível médio
                 showingLevelButtons = false; // Oculta os botões de nível
+                mostrandoPergunta = true; // Inicia a exibição das perguntas
+                embaralhar(questoesMedias, 5);
             }
             else if (CheckCollisionPointRec(mousePoint, hardButton)) {
                 selectedLevel = 3; // Difícil
-                // Defina a lógica do nível difícil aqui
+                background = hardBackground; // Muda o fundo para o nível difícil
                 showingLevelButtons = false; // Oculta os botões de nível
+                mostrandoPergunta = true; // Inicia a exibição das perguntas
+                embaralhar(questoesDificeis, 5);
             }
         }
 
-        // Lógica para exibir perguntas e receber respostas no nível fácil
-        if (mostrandoPergunta && selectedLevel == 1) {
-            if (IsKeyPressed(KEY_ENTER)) {
-                if (strcmp(respostaUsuario, questoesFaceis[perguntaAtual].resposta) == 0) {
-                    pontos += 10;
-                    respostaCorreta = true;
-                } else {
-                    vidas--;
-                    respostaCorreta = false;
-                }
-                perguntaAtual++;
-                if (perguntaAtual >= 10 || vidas <= 0) {
-                    mostrandoPergunta = false; // Termina as perguntas quando acabarem ou o jogador perder todas as vidas
-                } else {
-                    memset(respostaUsuario, 0, sizeof(respostaUsuario)); // Limpa a resposta do usuário
+        // Lógica para exibir perguntas e receber respostas
+        if (mostrandoPergunta) {
+            Questao *questoes;
+            int questoesCount;
+            if (selectedLevel == 1) {
+                questoes = questoesFaceis;
+                questoesCount = 10;
+            } else if (selectedLevel == 2) {
+                questoes = questoesMedias;
+                questoesCount = 5;
+            } else if (selectedLevel == 3) {
+                questoes = questoesDificeis;
+                questoesCount = 5;
+            }
+
+            if (perguntaAtual < questoesCount) {
+                // Renderiza a pergunta e a resposta do usuário
+                MostrarPergunta(customFont, chalkboyFont, background, questoes, perguntaAtual, respostaUsuario, textColor);
+
+                if (IsKeyPressed(KEY_ENTER)) {
+                    if (strcmp(respostaUsuario, questoes[perguntaAtual].resposta) == 0) {
+                        respostaCorreta = true;
+                        pontos++;
+                    } else {
+                        respostaCorreta = false;
+                        vidas--;
+                    }
+                    perguntaAtual++;
+                    respostaUsuario[0] = '\0'; // Limpa a resposta do usuário
                 }
             } else {
-                int key = GetKeyPressed();
-                if (key >= 32 && key <= 125 && strlen(respostaUsuario) < sizeof(respostaUsuario) - 1) {
-                    int len = strlen(respostaUsuario);
-                    respostaUsuario[len] = (char)key;
-                    respostaUsuario[len + 1] = '\0';
-                }
+                // Todas as perguntas foram respondidas
+                mostrandoPergunta = false;
+                // Mostrar a pontuação final ou reiniciar o jogo
             }
         }
 
-        // Desenho da tela
+        // Desenha na tela
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        DrawTexture(background, 0, 0, WHITE);
-
-        if (!loading && !gameStarted) {
-            DrawTextEx(customFont, "NexusNumber", (Vector2){SCREEN_WIDTH / 2 - MeasureTextEx(customFont, "NexusNumber", 40, 2).x / 2, SCREEN_HEIGHT / 4}, 40, 2, textColor);
-        }
-
-        if (loadingComplete && showingLevelButtons && !loading) {
-            DrawTextEx(customFont, "Selecione a dificuldade", (Vector2){SCREEN_WIDTH / 2 - MeasureTextEx(customFont, "Selecione a dificuldade", 25, 2).x / 2, SCREEN_HEIGHT / 4}, 25, 2, textColor);
-        }
-
+        
+        // Verifica se está no menu principal
         if (!gameStarted) {
-            DrawRectangleRec(enterButton, enterButtonColor);
-            DrawRectangleRec(exitButton, exitButtonColor);
-            DrawTextEx(customFont, "Entrar", (Vector2){enterButton.x + enterButton.width / 2 - MeasureTextEx(customFont, "Entrar", 20, 2).x / 2, enterButton.y + 15}, 20, 2, enterButtonTextColor);
-            DrawTextEx(customFont, "Sair", (Vector2){exitButton.x + exitButton.width / 2 - MeasureTextEx(customFont, "Sair", 20, 2).x / 2, exitButton.y + 15}, 20, 2, exitButtonTextColor);
+            MenuPrincipal(customFont, background, enterButton, exitButton, enterButtonColor, enterButtonTextColor, exitButtonColor, exitButtonTextColor, titleColor);
         }
-        else if (showingLevelButtons && !loading) {
-            DrawRectangleRec(easyButton, levelButtonColor);
-            DrawRectangleRec(mediumButton, levelButtonColor);
-            DrawRectangleRec(hardButton, levelButtonColor);
-            DrawTextEx(customFont, "Facil", (Vector2){easyButton.x + easyButton.width / 2 - MeasureTextEx(customFont, "Facil", 20, 2).x / 2, easyButton.y + 15}, 20, 2, levelButtonTextColor);
-            DrawTextEx(customFont, "Medio", (Vector2){mediumButton.x + mediumButton.width / 2 - MeasureTextEx(customFont, "Medio", 20, 2).x / 2, mediumButton.y + 15}, 20, 2, levelButtonTextColor);
-            DrawTextEx(customFont, "Dificil", (Vector2){hardButton.x + hardButton.width / 2 - MeasureTextEx(customFont, "Dificil", 20, 2).x / 2, hardButton.y + 15}, 20, 2, levelButtonTextColor);
+        
+        // Verifica se está mostrando "Carregando..."
+        if (loading && !loadingComplete) {
+            Carregando(customFont, loadingImage, titleColor);
         }
-
-        if (loading) {
-            DrawTexture(kelryImage, SCREEN_WIDTH / 2 - kelryImage.width / 2, SCREEN_HEIGHT / 2 - kelryImage.height / 2 - 50, WHITE);
-            DrawTextEx(customFont, "Carregando...", (Vector2){SCREEN_WIDTH / 2 - MeasureTextEx(customFont, "Carregando...", 30, 2).x / 2, SCREEN_HEIGHT / 2 + 120}, 30, 2, textColor);
+        
+        // Verifica se está mostrando os botões de nível
+        if (showingLevelButtons) {
+            MostrarNiveis(customFont, background, easyButton, mediumButton, hardButton, levelButtonColor, levelButtonTextColor, titleColor);
         }
-
-        // Desenha perguntas e recebe respostas no nível fácil
-    // Desenha perguntas e recebe respostas no nível fácil
-if (mostrandoPergunta && selectedLevel == 1) {
-    char perguntaFormatada[512] = {0};
-    dividirTextoEmLinhas(questoesFaceis[perguntaAtual].pergunta, perguntaFormatada, SCREEN_WIDTH - 100, customFont, 20);
-    DrawTextEx(customFont, perguntaFormatada, (Vector2){20,110}, 20, 2, textColor);
-    
-    // Ajuste as posições de "Sua resposta", "Vidas" e "Pontos" aqui
-    Vector2 posicaoResposta = {200, 170}; // Posição da "Sua resposta"
-    
-    Vector2 posicaoVidas = {200, 260};   // Posição das "Vidas"
-    Vector2 posicaoPontos = {200, 280};  // Posição dos "Pontos"
-    
-    DrawTextEx(customFont, "Sua resposta: ", posicaoResposta, 20, 2, textColor);
-    DrawTextEx(customFont, respostaUsuario, (Vector2){posicaoResposta.x + 120, posicaoResposta.y}, 20, 2, textColor);
-    DrawTextEx(customFont, TextFormat("Vidas: %d", vidas), posicaoVidas, 20, 2, textColor);
-    DrawTextEx(customFont, TextFormat("Pontos: %d", pontos), posicaoPontos, 20, 2, textColor);
-
-    if (respostaCorreta) {
-        DrawTextEx(customFont, "Correto!", (Vector2){20, 350}, 20, 2, GREEN);
-    } else {
-        DrawTextEx(customFont, "Errado! Tente novamente.", (Vector2){20, 350}, 20, 2, RED);
-    }
-}
-
 
         EndDrawing();
     }
 
-    // Fecha a janela e limpa recursos
-    UnloadFont(customFont);
+    // Unload textures and fonts
     UnloadTexture(background);
-    UnloadTexture(kelryImage);
     UnloadTexture(easyBackground);
+    UnloadTexture(loadingImage);
+    UnloadTexture(mediumBackground);
+    UnloadTexture(hardBackground);
+    UnloadFont(customFont);
+    UnloadFont(chalkboyFont);
+
     CloseWindow();
 
     return 0;
