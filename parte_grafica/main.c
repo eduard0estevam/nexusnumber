@@ -30,9 +30,9 @@ void MenuPrincipal(Font customFont, Texture2D background, Rectangle enterButton,
     DrawTexture(background, 0, 0, WHITE);
     DrawTextEx(customFont, "NexusNumber", (Vector2){SCREEN_WIDTH / 2 - 230, 170}, 50, 2, titleColor);
     DrawRectangleRec(enterButton, enterButtonColor);
-    DrawTextEx(customFont, "Entrar", (Vector2){enterButton.x + 30, enterButton.y + 10}, 30, 2, enterButtonTextColor);
+    DrawTextEx(customFont, "Entrar", (Vector2){enterButton.x + 28, enterButton.y + 10}, 30, 2, enterButtonTextColor);
     DrawRectangleRec(exitButton, exitButtonColor);
-    DrawTextEx(customFont, "Sair", (Vector2){exitButton.x + 50, enterButton.y + 10}, 30, 2, exitButtonTextColor);
+    DrawTextEx(customFont, "Sair", (Vector2){exitButton.x + 50, enterButton.y + 80}, 30, 2, exitButtonTextColor);
 }
 
 void Carregando(Font customFont, Texture2D loadingImage, Color titleColor) {
@@ -60,8 +60,8 @@ void MostrarPergunta(Font customFont, Font chalkboyFont, Texture2D background, Q
     DrawTexture(background, 0, 0, WHITE);
 
     // Desenhar seta de voltar e botão de reiniciar
-    DrawTextEx(customFont, "< Voltar", (Vector2){10, 10}, 20, 2, titleColor);
-    DrawTextEx(customFont, "Reiniciar", (Vector2){SCREEN_WIDTH - 100, 10}, 20, 2, titleColor);
+    DrawTextEx(customFont, "< Voltar", (Vector2){10, 10}, 20, 2, textColor);
+    DrawTextEx(customFont, "Reiniciar", (Vector2){SCREEN_WIDTH - 150, 10}, 20, 2, textColor);
 
     // Dividir a pergunta em múltiplas linhas
     char pergunta[256];
@@ -102,8 +102,8 @@ void MenuPausa(Font customFont, Texture2D pauseImage, Color titleColor) {
 void TelaGameOver(Font customFont, Texture2D gameOverImage, Color titleColor) {
     ClearBackground(BLACK);
     DrawTexture(gameOverImage, (SCREEN_WIDTH - gameOverImage.width) / 2, (SCREEN_HEIGHT - gameOverImage.height) / 2, WHITE);
-    DrawTextEx(customFont, "GameOver! Tente novamente...", (Vector2){SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 20}, 40, 2, titleColor);
-    DrawTextEx(customFont, "Clique na tela para reiniciar.", (Vector2){SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 + 20}, 20, 2, titleColor);
+    DrawTextEx(customFont, "GameOver! Tente novamente...", (Vector2){SCREEN_WIDTH / 2 - 400, SCREEN_HEIGHT / 2 - 100}, 23, 2, titleColor);
+    DrawTextEx(customFont, "Clique na tela para reiniciar.", (Vector2){SCREEN_WIDTH / 2 - 400, SCREEN_HEIGHT / 2-  200}, 23, 2, titleColor);
 }
 
 int main(void) {
@@ -166,11 +166,11 @@ int main(void) {
     Questao questoesFaceis[10] = { 
         {"1- 2, 6, 12, 20, 30, ? Qual eh o proximo numero\nna sequencia?", "42"},
         {"2- A soma das idades de Ana e Bia eh 44. Ana eh\n 8 anos mais velha que Bia. Qual\n eh a idade de Ana?", "26"},
-        {"3- 13, 18 = 31\n7, 25 = 32\n12, 30 = 42\n26, 13 = ?", "39"},
+        {"3- 13, 18 = 31 | 7, 25 = 32 | 12, 30 = 42 | 26, 13 = ?", "39"},
         {"4- Qual eh o proximo numero\n na sequencia: 1, 4, 9, 16, 25, ...?\n", "36"},
         {"5- Joao tem o dobro da idade de Pedro.\n Se a diferenca de suas\n idades eh de 15 anos, quantos\n anos Joao tem?", "30"},
         {"6- 4, 8 e 16: Qual eh o proximo numero?", "32"},
-        {"7- A + B = 60\nA - B = 40\n A / B = ?", "5"},
+        {"7- A + B = 60 | A - B = 40 | A / B = ?", "5"},
         {"8- Em um quadrado formado por 16 palitos\ncom quantos palitos eu posso\n fazer 2 quadrados ?", "4"},
         {"9- A media aritmetica de cinco numeros eh 12.\n Se somarmos 3 a cada um desses numeros, qual\n sera a nova media?", "15"},
         {"10- Qual o valor de x na equacao: 3x + 2 = 17?", "5"}
@@ -184,24 +184,19 @@ int main(void) {
         {"5- Qual eh a soma de 1/3 e 1/4?", "7/12"}
     };
 
-    Questao questoesDificeis[10] = {
-        {"1- 9, 16 = 7\n4, 36 = 8\n121, 81 = 20\n25, 49 = ?", "12"},
-        {"2- Em um sistema de codificação, AB eh o dia do\nnascimento de uma pessoa e CD eh seu mês de nascimento.\nQual eh o mes de nascimento dessa pessoa se a data for trinta de julho?", "07"},
-        {"3- Se 3 gatos caçam 3 ratos em 3 minutos, em quantos minutos levarão 100\ngatos para caçar 100 ratos?", "3"},
+    Questao questoesDificeis[5] = {
+        {"1- 9, 16 = 7 | 4, 36 = 8 | 121, 81 = 20 |25, 49 = ?", "12"},
+        {"2- Em um sistema de codificação, AB eh o dia do\nnascimento de uma pessoa e CD eh seu mes de nascimento.\nQual eh o mes de nascimento dessa pessoa se a data for trinta de julho?", "07"},
+        {"3- Se 3 gatos caca, 3 ratos em 3 minutos, em quantos minutos levarão 100\ngatos para cacar 100 ratos?", "3"},
         {"4- Um carro viaja a 60 km/h. Em quantas horas levará para percorrer 180 km?", "3"},
         {"5- Se a=1, b=2, c=3, ..., z=26, qual eh a soma das letras da palavra CAT?", "24"},
-        {"6- Se uma torneira enche um tanque em 2 horas e outra torneira enche o\nmesmo tanque em 3 horas, quanto tempo levarão as duas torneiras juntas\npara encher o tanque?", "1.2"},
-        {"7- Se um trem viaja a uma velocidade constante de 90 km/h e percorre uma\ndistância de 270 km, quanto tempo o trem levará para completar a\nviagem?", "3"},
-        {"8- Qual é a raiz quadrada de 144?", "12"},
-        {"9- Em um grupo de 15 pessoas, 9 gostam de chocolate e 7 gostam de\nbaunilha. Se 4 pessoas gostam de ambos, quantas pessoas não gostam de\nnenhum dos sabores?", "3"},
-        {"10- Se a média aritmética de três números é 15 e dois desses números são 10\ne 20, qual é o terceiro número?", "15"}
     };
 
     // Embaralha as perguntas
     srand(time(NULL));
     embaralhar(questoesFaceis, 10);
     embaralhar(questoesMedias, 5);
-    embaralhar(questoesDificeis, 10);
+    embaralhar(questoesDificeis, 5);
 
     int perguntaAtual = 0;
     char respostaUsuario[256] = "";
@@ -237,7 +232,7 @@ int main(void) {
                 respostaUsuario[0] = '\0';
             }
         } else {
-            if (!gameStarted) { //MENU PRINCIPAL
+            if (!gameStarted) { //MENU PRINCIPAL (aqui é verificado o clique dos botoes)
                 MenuPrincipal(customFont, background, enterButton, exitButton, enterButtonColor, enterButtonTextColor, exitButtonColor, exitButtonTextColor, titleColor);
                 if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                     Vector2 mousePoint = GetMousePosition();
@@ -272,6 +267,7 @@ int main(void) {
                         // Volta para o menu principal
                         gameStarted = false;
                         showingLevelButtons = false;
+                         PlaySound(clickSound);
                     }
                 }
             } else if (loading) {
@@ -299,6 +295,8 @@ int main(void) {
                         showingLevelButtons = true;
                         loadingComplete = false;
                         respostaUsuario[0] = '\0';
+                        PlaySound(clickSound);  // Reproduz o som de clique
+                        
                     }
 
                     // Verifica clique no botão de reiniciar
@@ -307,6 +305,7 @@ int main(void) {
                         vidas = 3;
                         perguntaAtual = 0;
                         respostaUsuario[0] = '\0';
+                        PlaySound(clickSound);  // Reproduz o som de clique
                     }
                 }
 
