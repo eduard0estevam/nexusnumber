@@ -1,7 +1,14 @@
 #include <stdlib.h>
 #include <time.h>
+#include <stdio.h>
 #include <string.h>
 #include "raylib.h"
+
+// Variáveis globais
+int vidas = 3;
+int pontos = 0;
+float tempoJogo = 0.0f;
+bool vitoria = false;
 
 // Estrutura para armazenar perguntas e respostas
 typedef struct {
@@ -55,7 +62,7 @@ void MostrarNiveis(Font customFont, Texture2D background, Rectangle easyButton, 
     DrawTextEx(customFont, "< Voltar", (Vector2){10, 10}, 20, 2, titleColor);
 }
 
-void MostrarPergunta(Font customFont, Font chalkboyFont, Texture2D background, Questao questoes[], int perguntaAtual, char respostaUsuario[], Color textColor, Color titleColor) {
+void MostrarPergunta(Font customFont, Font chalkboyFont, Texture2D background, Questao questoes[], int perguntaAtual, char respostaUsuario[], int pontos, int vidas, Color textColor, Color titleColor) {
     ClearBackground(RAYWHITE);
     DrawTexture(background, 0, 0, WHITE);
 
@@ -67,15 +74,22 @@ void MostrarPergunta(Font customFont, Font chalkboyFont, Texture2D background, Q
     char pergunta[256];
     strcpy(pergunta, questoes[perguntaAtual].pergunta);
     char *linha = strtok(pergunta, "\n");
-    int y = 150;
+    int y = 140;
     while (linha != NULL) {
-        DrawTextEx(chalkboyFont, linha, (Vector2){50, y}, 27, 2, textColor);
+        DrawTextEx(chalkboyFont, linha, (Vector2){125, y}, 27, 2, textColor);
         y += 30; // Ajustar o espaçamento entre linhas conforme necessário
         linha = strtok(NULL, "\n");
     }
 
-    DrawTextEx(chalkboyFont, "Sua resposta:", (Vector2){350, 300}, 27, 2, textColor);
-    DrawTextEx(chalkboyFont, respostaUsuario, (Vector2){350, 340}, 27, 2, textColor);
+    DrawTextEx(chalkboyFont, "Sua resposta:", (Vector2){380, 280}, 27, 2, textColor);
+    DrawTextEx(chalkboyFont, respostaUsuario, (Vector2){380, 340}, 27, 2, textColor);
+
+    // Mostrar pontuação e vidas
+    char strPontos[20], strVidas[20];
+    sprintf(strPontos, "Pontos: %d", pontos);
+    sprintf(strVidas, "Vidas: %d", vidas);
+    DrawTextEx(customFont, strPontos, (Vector2){380, SCREEN_HEIGHT - 310}, 20, 2, textColor);
+    DrawTextEx(customFont, strVidas, (Vector2){380, SCREEN_HEIGHT - 270}, 20, 2, textColor);
 
     // Captura a resposta do usuário
     int key = GetCharPressed();
@@ -102,8 +116,20 @@ void MenuPausa(Font customFont, Texture2D pauseImage, Color titleColor) {
 void TelaGameOver(Font customFont, Texture2D gameOverImage, Color titleColor) {
     ClearBackground(BLACK);
     DrawTexture(gameOverImage, (SCREEN_WIDTH - gameOverImage.width) / 2, (SCREEN_HEIGHT - gameOverImage.height) / 2, WHITE);
-    DrawTextEx(customFont, "GameOver! Tente novamente...", (Vector2){SCREEN_WIDTH / 2 - 400, SCREEN_HEIGHT / 2 - 100}, 23, 2, titleColor);
-    DrawTextEx(customFont, "Clique na tela para reiniciar.", (Vector2){SCREEN_WIDTH / 2 - 400, SCREEN_HEIGHT / 2-  200}, 23, 2, titleColor);
+    DrawTextEx(customFont, "GameOver!", (Vector2){SCREEN_WIDTH / 2 - 380, SCREEN_HEIGHT / 2 - 200}, 52, 2, titleColor);
+    DrawTextEx(customFont, "Clique na tela para reiniciar.", (Vector2){SCREEN_WIDTH / 2 - 390, SCREEN_HEIGHT / 2 - 120}, 20, 2, titleColor);
+}
+
+void TelaVitoria(Font customFont, Texture2D vitoriaImage, int pontos, float tempoJogo, Color titleColor) {
+    ClearBackground(BLACK);
+    DrawTexture(vitoriaImage, (SCREEN_WIDTH - vitoriaImage.width) / 2, (SCREEN_HEIGHT - vitoriaImage.height) / 2, WHITE);
+    DrawTextEx(customFont, "Parabens! Você venceu!", (Vector2){SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100}, 40, 2, titleColor);
+
+    char strPontos[50], strTempo[50];
+    sprintf(strPontos, "Pontuacao final: %d", pontos);
+    sprintf(strTempo, "Tempo de jogo: %.2f segundos", tempoJogo);
+    DrawTextEx(customFont, strPontos, (Vector2){SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 + 20}, 30, 2, titleColor);
+    DrawTextEx(customFont, strTempo, (Vector2){SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 + 60}, 30, 2, titleColor);
 }
 
 int main(void) {
@@ -121,9 +147,10 @@ int main(void) {
     Texture2D easyBackground = LoadTexture("./imagens/facil.png");
     Texture2D loadingImage = LoadTexture("./imagens/carregamento.png"); // Nova textura de carregamento
     Texture2D mediumBackground = LoadTexture("./imagens/medio.png");
-    Texture2D hardBackground = LoadTexture("./imagens/hard11.png");
+    Texture2D hardBackground = LoadTexture("./imagens/hardi.png");
     Texture2D pauseImage = LoadTexture("./imagens/pause.png"); // Imagem de pausa
     Texture2D gameOverImage = LoadTexture("./imagens/gameover.png"); // Imagem de game over
+    Texture2D vitoriaImage = LoadTexture("./imagens/vitoria.png"); // Imagem de vitória
     Music music = LoadMusicStream("./audio/musica.ogg");
     SetMusicVolume(music, 0.5f); // Define o volume da música
     PlayMusicStream(music); // Inicia a reprodução da música
@@ -160,15 +187,12 @@ int main(void) {
     int selectedLevel = 0;
     float loadingTimer = 0;
 
-    // Variáveis para o jogo
-    int vidas = 3;
-    int pontos = 0;
     Questao questoesFaceis[10] = { 
         {"1- 2, 6, 12, 20, 30, ? Qual eh o proximo numero\nna sequencia?", "42"},
         {"2- A soma das idades de Ana e Bia eh 44. Ana eh\n 8 anos mais velha que Bia. Qual\n eh a idade de Ana?", "26"},
         {"3- 13, 18 = 31 | 7, 25 = 32 | 12, 30 = 42 | 26, 13 = ?", "39"},
         {"4- Qual eh o proximo numero\n na sequencia: 1, 4, 9, 16, 25, ...?\n", "36"},
-        {"5- Joao tem o dobro da idade de Pedro.\n Se a diferenca de suas\n idades eh de 15 anos, quantos\n anos Joao tem?", "30"},
+        {"5- Joao tem o dobro da idade de Pedro. Se\n a diferenca de suas idades eh de 15 anos, quantos\n anos Joao tem?", "30"},
         {"6- 4, 8 e 16: Qual eh o proximo numero?", "32"},
         {"7- A + B = 60 | A - B = 40 | A / B = ?", "5"},
         {"8- Em um quadrado formado por 16 palitos\ncom quantos palitos eu posso\n fazer 2 quadrados ?", "4"},
@@ -177,19 +201,19 @@ int main(void) {
     };
 
     Questao questoesMedias[5] = {
-        {"1- Em um saco ha 5 bolas vermelhas, 4 bolas azuis e 3 bolas verdes. Qual a\nprobabilidade de se retirar uma bola azul?", "1/3"},
-        {"2- Se o dobro de um numero eh 24, qual eh a metade desse numero?", "12"},
-        {"3- Se 5 maquinas podem completar um trabalho em 8 horas, quantas horas levarao 8\nmaquinas para completar o mesmo trabalho?", "5"},
-        {"4- Um produto custa R$ 120,00. Apos um desconto de 25%, qual eh o novo preco?", "90"},
+        {"1- Em um saco ha 5 bolas vermelhas, 4 bolas azuis\n e 3 bolas verdes. Qual a probabilidade de se\n retirar uma bola azul?", "1/3"},
+        {"2- Se o dobro de um numero eh 24, qual eh a metade\n desse numero?", "12"},
+        {"3- Se 5 maquinas podem completar um trabalho em\n 8 horas, quantas horas levarao 8\nmaquinas para completar o mesmo trabalho?", "5"},
+        {"4- Um produto custa R$ 120,00.\n Apos um desconto de 25%, qual eh o novo preco?", "90"},
         {"5- Qual eh a soma de 1/3 e 1/4?", "7/12"}
     };
 
     Questao questoesDificeis[5] = {
         {"1- 9, 16 = 7 | 4, 36 = 8 | 121, 81 = 20 |25, 49 = ?", "12"},
-        {"2- Em um sistema de codificação, AB eh o dia do\nnascimento de uma pessoa e CD eh seu mes de nascimento.\nQual eh o mes de nascimento dessa pessoa se a data for trinta de julho?", "07"},
-        {"3- Se 3 gatos caca, 3 ratos em 3 minutos, em quantos minutos levarão 100\ngatos para cacar 100 ratos?", "3"},
-        {"4- Um carro viaja a 60 km/h. Em quantas horas levará para percorrer 180 km?", "3"},
-        {"5- Se a=1, b=2, c=3, ..., z=26, qual eh a soma das letras da palavra CAT?", "24"},
+        {"2- Em um sistema de codificacao, AB eh o dia do\n nascimento de uma pessoa e CD eh seu mes\n de nascimento.Qual eh o mes de nascimento dessa pessoa se a\n data for trinta de julho?", "07"},
+        {"3- Se 3 gatos caca, 3 ratos em 3 minutos, em\n quantos minutos levarão 100 gatos para cacar\n 100 ratos?", "3"},
+        {"4- Um carro viaja a 60 km/h. Em quantas horas\n levara para percorrer 180 km?", "3"},
+        {"5- Se a=1, b=2, c=3, ..., z=26, qual eh a soma\n das letras da palavra CAT?", "24"},
     };
 
     // Embaralha as perguntas
@@ -205,6 +229,7 @@ int main(void) {
     while (!exitGame && !WindowShouldClose()) {
         
         UpdateMusicStream(music);
+        tempoJogo += GetFrameTime();
 
         BeginDrawing();
        
@@ -230,6 +255,23 @@ int main(void) {
                 pontos = 0;
                 perguntaAtual = 0;
                 respostaUsuario[0] = '\0';
+                tempoJogo = 0.0f;
+            }
+        } else if (vitoria) {
+            TelaVitoria(customFont, vitoriaImage, pontos, tempoJogo, titleColor);
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                // Reinicia o jogo
+                gameStarted = false;
+                showingLevelButtons = false;
+                loading = false;
+                loadingComplete = false;
+                paused = false;
+                vitoria = false;
+                vidas = 3;
+                pontos = 0;
+                perguntaAtual = 0;
+                respostaUsuario[0] = '\0';
+                tempoJogo = 0.0f;
             }
         } else {
             if (!gameStarted) { //MENU PRINCIPAL (aqui é verificado o clique dos botoes)
@@ -267,7 +309,7 @@ int main(void) {
                         // Volta para o menu principal
                         gameStarted = false;
                         showingLevelButtons = false;
-                         PlaySound(clickSound);
+                        PlaySound(clickSound);
                     }
                 }
             } else if (loading) {
@@ -280,11 +322,11 @@ int main(void) {
                 }
             } else if (loadingComplete) {
                 if (selectedLevel == 1) {
-                    MostrarPergunta(customFont, chalkboyFont, easyBackground, questoesFaceis, perguntaAtual, respostaUsuario, textColor, titleColor);
+                    MostrarPergunta(customFont, chalkboyFont, easyBackground, questoesFaceis, perguntaAtual, respostaUsuario, pontos, vidas, textColor, titleColor);
                 } else if (selectedLevel == 2) {
-                    MostrarPergunta(customFont, chalkboyFont, mediumBackground, questoesMedias, perguntaAtual, respostaUsuario, textColor, titleColor);
+                    MostrarPergunta(customFont, chalkboyFont, mediumBackground, questoesMedias, perguntaAtual, respostaUsuario, pontos, vidas, textColor, titleColor);
                 } else if (selectedLevel == 3) {
-                    MostrarPergunta(customFont, chalkboyFont, hardBackground, questoesDificeis, perguntaAtual, respostaUsuario, textColor, titleColor);
+                    MostrarPergunta(customFont, chalkboyFont, hardBackground, questoesDificeis, perguntaAtual, respostaUsuario, pontos, vidas, textColor, titleColor);
                 }
 
                 // Verifica clique na seta de voltar
@@ -296,7 +338,6 @@ int main(void) {
                         loadingComplete = false;
                         respostaUsuario[0] = '\0';
                         PlaySound(clickSound);  // Reproduz o som de clique
-                        
                     }
 
                     // Verifica clique no botão de reiniciar
@@ -316,6 +357,15 @@ int main(void) {
                         pontos += 10;
                     } else {
                         vidas -= 1;
+                        // Mostrar mensagem de erro
+                        DrawTextEx(customFont, "Voce errou! A resposta era:", (Vector2){350, 380}, 27, 2, RED);
+                        if (selectedLevel == 1) {
+                            DrawTextEx(customFont, questoesFaceis[perguntaAtual].resposta, (Vector2){350, 420}, 27, 2, RED);
+                        } else if (selectedLevel == 2) {
+                            DrawTextEx(customFont, questoesMedias[perguntaAtual].resposta, (Vector2){350, 420}, 27, 2, RED);
+                        } else if (selectedLevel == 3) {
+                            DrawTextEx(customFont, questoesDificeis[perguntaAtual].resposta, (Vector2){350, 420}, 27, 2, RED);
+                        }
                     }
                     perguntaAtual++;
                     respostaUsuario[0] = '\0'; // Limpa a resposta do usuário
@@ -323,7 +373,7 @@ int main(void) {
                         if (vidas <= 0) {
                             gameOver = true;
                         } else {
-                            gameStarted = false;
+                            vitoria = true;
                         }
                     }
                 }
@@ -342,6 +392,7 @@ int main(void) {
     UnloadTexture(hardBackground);
     UnloadTexture(pauseImage); // Nova textura de pausa
     UnloadTexture(gameOverImage); // Nova textura de game over
+    UnloadTexture(vitoriaImage); // Nova textura de vitória
     UnloadMusicStream(music);
     UnloadSound(clickSound);
 
