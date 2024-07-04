@@ -25,7 +25,6 @@ int pontos = 0; // Pontuação a ser acumulada pelo jogador
 
 // Protótipos das funções
 void limparTela();
-void esperar(int segundos);
 char exibirMenuPrincipal();
 char exibirMenuNivel();
 void executarJogo(char nivelDoJogo);
@@ -52,12 +51,22 @@ int main() {
     vidas = 3;
     pontos = 0;
 
+    time_t inicioJogo, fimJogo;
+    time(&inicioJogo); // Captura o tempo inicial do jogo
+
     srand(time(NULL));
 
     nivelDoJogo = exibirMenuNivel();
     limparTela();
     executarJogo(nivelDoJogo);
+
+    time(&fimJogo); // Captura o tempo final do jogo
+
+    double tempo_jogado = difftime(fimJogo, inicioJogo); // Calcula o tempo total jogado
+
     printf("\n%s, sua pontuacao final eh: %d\n", nomeJogador, pontos);
+    printf("Tempo jogado: %.0f segundos\n", tempo_jogado);
+
     salvarPontuacao(nomeJogador, pontos);
     pontos = 0; // Resetar a pontuação para o próximo jogo
 
@@ -66,10 +75,6 @@ int main() {
 
 void limparTela() {
     system("cls");
-}
-
-void esperar(int segundos) {
-    Sleep(segundos * 1000);
 }
 
 char exibirMenuPrincipal() {
@@ -147,7 +152,7 @@ void nivelPerguntas(int *vidas, Questao questoes[], int total_questoes) {
                 printf("Errado! Tente novamente.\n");
                 (*vidas)--;
                 if (*vidas > 0) {
-                    esperar(2);
+                    Sleep(2000); // Espera 2 segundos antes de continuar
                 }
             }
 
