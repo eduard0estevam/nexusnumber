@@ -286,7 +286,7 @@ int main(void) {
 
         if (IsKeyPressed(KEY_P)) {
             paused = !paused;
-            aceitandoResposta = !paused; // Controla aceitação de respostas
+            aceitandoResposta = false; // Controla aceitação de respostas e nao aceita respostas durante a pausa
         }
 
         if (paused) {
@@ -404,6 +404,7 @@ int main(void) {
                         aceitandoResposta = false; // Não aceitar respostas durante o rascunho
                         PlaySound(clickSound);
                     }
+
                 }
 
                 if (IsKeyPressed(KEY_ENTER)) {
