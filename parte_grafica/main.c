@@ -13,6 +13,7 @@ bool erro = false;
 float tempoErro = 0.0f;
 bool rascunhoAtivo = false;
 bool rascunhoMovendo = false;
+bool aceitandoResposta = true; // Variável para controlar a aceitação de respostas
 Vector2 rascunhoPos = {100, 100};
 Vector2 mouseOffset = {0, 0};
 RenderTexture2D rascunhoTarget;
@@ -98,17 +99,19 @@ void MostrarPergunta(Font customFont, Font chalkboyFont, Texture2D background, Q
     DrawTextEx(chalkboyFont, strPontos, (Vector2){380, SCREEN_HEIGHT - 306}, 22, 2, textColor);
     DrawTextEx(chalkboyFont, strVidas, (Vector2){380, SCREEN_HEIGHT - 270}, 22, 2, textColor);
 
-    int key = GetCharPressed();
-    while (key > 0) {
-        if (key >= 32 && key <= 125 && strlen(respostaUsuario) < 255) {
-            int len = strlen(respostaUsuario);
-            respostaUsuario[len] = (char)key;
-            respostaUsuario[len + 1] = '\0';
+    if (aceitandoResposta) {
+        int key = GetCharPressed();
+        while (key > 0) {
+            if (key >= 32 && key <= 125 && strlen(respostaUsuario) < 255) {
+                int len = strlen(respostaUsuario);
+                respostaUsuario[len] = (char)key;
+                respostaUsuario[len + 1] = '\0';
+            }
+            key = GetCharPressed();
         }
-        key = GetCharPressed();
-    }
-    if (IsKeyPressed(KEY_BACKSPACE) && strlen(respostaUsuario) > 0) {
-        respostaUsuario[strlen(respostaUsuario) - 1] = '\0';
+        if (IsKeyPressed(KEY_BACKSPACE) && strlen(respostaUsuario) > 0) {
+            respostaUsuario[strlen(respostaUsuario) - 1] = '\0';
+        }
     }
 }
 
@@ -283,6 +286,7 @@ int main(void) {
 
         if (IsKeyPressed(KEY_P)) {
             paused = !paused;
+            aceitandoResposta = !paused; // Controla aceitação de respostas
         }
 
         if (paused) {
@@ -397,14 +401,16 @@ int main(void) {
 
                     if (CheckCollisionPointRec(mousePoint, rascunhoButton)) {
                         rascunhoAtivo = true;
+                        aceitandoResposta = false; // Não aceitar respostas durante o rascunho
                         PlaySound(clickSound);
                     }
                 }
 
                 if (IsKeyPressed(KEY_ENTER)) {
-                    if ((selectedLevel == 1 && strcmp(respostaUsuario, questoesFaceis[perguntaAtual].resposta) == 0) ||
+                    if (aceitandoResposta && (
+                        (selectedLevel == 1 && strcmp(respostaUsuario, questoesFaceis[perguntaAtual].resposta) == 0) ||
                         (selectedLevel == 2 && strcmp(respostaUsuario, questoesMedias[perguntaAtual].resposta) == 0) ||
-                        (selectedLevel == 3 && strcmp(respostaUsuario, questoesDificeis[perguntaAtual].resposta) == 0)) {
+                        (selectedLevel == 3 && strcmp(respostaUsuario, questoesDificeis[perguntaAtual].resposta) == 0))) {
                         pontos += 10;
                         erro = false;
                     } else {
@@ -436,6 +442,7 @@ int main(void) {
                 TelaRascunho(customFont, titleColor, folhaCaderno);
                 if (IsKeyPressed(KEY_V)) {
                     rascunhoAtivo = false;
+                    aceitandoResposta = true; // Volta a aceitar respostas
                 }
 
                 if (IsKeyPressed(KEY_C)) {
