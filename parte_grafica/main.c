@@ -61,7 +61,7 @@ void MostrarNiveis(Font customFont, Texture2D background, Rectangle easyButton, 
     DrawTextEx(customFont, "Dificil", (Vector2){hardButton.x + 36, hardButton.y + 10}, 30, 2, levelButtonTextColor);
 
     // Desenhar seta de voltar
-    DrawTextEx(customFont, "< Voltar", (Vector2){10, 10}, 20, 2, titleColor);
+    DrawTextEx(customFont, "< Voltar", (Vector2){10, 10}, 22, 2, titleColor);
 }
 
 void MostrarPergunta(Font customFont, Font chalkboyFont, Texture2D background, Questao questoes[], int perguntaAtual, char respostaUsuario[], int pontos, int vidas, Color textColor, Color titleColor) {
@@ -69,8 +69,8 @@ void MostrarPergunta(Font customFont, Font chalkboyFont, Texture2D background, Q
     DrawTexture(background, 0, 0, WHITE);
 
     // Desenhar seta de voltar e botão de reiniciar
-    DrawTextEx(customFont, "< Voltar", (Vector2){10, 10}, 20, 2, textColor);
-    DrawTextEx(customFont, "Reiniciar", (Vector2){SCREEN_WIDTH - 150, 10}, 20, 2, textColor);
+    DrawTextEx(customFont, "< Voltar", (Vector2){10, 10}, 22, 2, textColor);
+    DrawTextEx(customFont, "Reiniciar", (Vector2){SCREEN_WIDTH - 180, 10}, 22, 2, textColor);
 
     // Dividir a pergunta em múltiplas linhas
     char pergunta[256];
@@ -90,8 +90,8 @@ void MostrarPergunta(Font customFont, Font chalkboyFont, Texture2D background, Q
     char strPontos[20], strVidas[20];
     sprintf(strPontos, "Pontos: %d", pontos);
     sprintf(strVidas, "Vidas: %d", vidas);
-    DrawTextEx(chalkboyFont, strPontos, (Vector2){380, SCREEN_HEIGHT - 310}, 20, 2, textColor);
-    DrawTextEx(chalkboyFont, strVidas, (Vector2){380, SCREEN_HEIGHT - 270}, 20, 2, textColor);
+    DrawTextEx(chalkboyFont, strPontos, (Vector2){380, SCREEN_HEIGHT - 310}, 22, 2, textColor);
+    DrawTextEx(chalkboyFont, strVidas, (Vector2){380, SCREEN_HEIGHT - 270}, 22, 2, textColor);
 
     // Captura a resposta do usuário
     int key = GetCharPressed();
@@ -135,14 +135,8 @@ void TelaVitoria(Font customFont, Texture2D vitoriaImage, int pontos, float temp
 }
 
 void MostrarMensagemErro(Font customFont, Questao questoes[], int perguntaAtual, int selectedLevel, Color textColor) {
-    DrawTextEx(customFont, "Voce errou! A resposta era:", (Vector2){350, 380}, 27, 2, RED);
-    if (selectedLevel == 1) {
-        DrawTextEx(customFont, questoes[perguntaAtual].resposta, (Vector2){350, 420}, 27, 2, RED);
-    } else if (selectedLevel == 2) {
-        DrawTextEx(customFont, questoes[perguntaAtual].resposta, (Vector2){350, 420}, 27, 2, RED);
-    } else if (selectedLevel == 3) {
-        DrawTextEx(customFont, questoes[perguntaAtual].resposta, (Vector2){350, 420}, 27, 2, RED);
-    }
+    DrawTextEx(customFont, "Errado! A resposta era:", (Vector2){440, 310}, 23, 2, RED);
+    DrawTextEx(customFont, questoes[perguntaAtual].resposta, (Vector2){640, 350}, 27, 2, RED);
 }
 
 int main(void) {
@@ -200,7 +194,7 @@ int main(void) {
     int selectedLevel = 0;
     float loadingTimer = 0;
 
-  Questao questoesFaceis[10] = { 
+    Questao questoesFaceis[10] = { 
         {"1- 2, 6, 12, 20, 30, ? Qual eh o proximo numero\nna sequencia?", "42"},
         {"2- A soma das idades de Ana e Bia eh 44. Ana eh\n 8 anos mais velha que Bia. Qual\n eh a idade de Ana?", "26"},
         {"3- 13, 18 = 31 | 7, 25 = 32 | 12, 30 = 42 | 26, 13 = ?", "39"},
@@ -228,7 +222,6 @@ int main(void) {
         {"4- Um carro viaja a 60 km/h. Em quantas horas\n levara para percorrer 180 km?", "3"},
         {"5- Se a=1, b=2, c=3, ..., z=26, qual eh a soma\n das letras da palavra CAT?", "24"},
     };
-
 
     // Embaralha as perguntas
     srand(time(NULL));
@@ -355,11 +348,18 @@ int main(void) {
                     }
 
                     // Verifica clique no botão de reiniciar
-                    if (mousePoint.x >= SCREEN_WIDTH - 100 && mousePoint.x <= SCREEN_WIDTH - 20 && mousePoint.y >= 10 && mousePoint.y <= 30) {
+                    if (mousePoint.x >= SCREEN_WIDTH - 150 && mousePoint.x <= SCREEN_WIDTH - 50 && mousePoint.y >= 10 && mousePoint.y <= 30) {
                         // Reinicia o nível atual
                         vidas = 3;
                         perguntaAtual = 0;
                         respostaUsuario[0] = '\0';
+                        if (selectedLevel == 1) {
+                            embaralhar(questoesFaceis, 10);
+                        } else if (selectedLevel == 2) {
+                            embaralhar(questoesMedias, 5);
+                        } else if (selectedLevel == 3) {
+                            embaralhar(questoesDificeis, 5);
+                        }
                         PlaySound(clickSound);  // Reproduz o som de clique
                     }
                 }
