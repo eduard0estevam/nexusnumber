@@ -75,7 +75,7 @@ void MostrarPergunta(Font customFont, Font chalkboyFont, Texture2D background, Q
     DrawTextEx(customFont, "Reiniciar", (Vector2){SCREEN_WIDTH - 180, 10}, 22, 2, textColor);
 
     DrawRectangleRec(rascunhoButton, buttonColor);
-    DrawTextEx(customFont, "Rascunho", (Vector2){rascunhoButton.x + 10, rascunhoButton.y + 10}, 22, 2, buttonTextColor);
+    DrawTextEx(customFont, "Rascunho", (Vector2){rascunhoButton.x + 5, rascunhoButton.y + 10}, 22, 2, buttonTextColor);
 
     char pergunta[256];
     strcpy(pergunta, questoes[perguntaAtual].pergunta);
@@ -87,13 +87,13 @@ void MostrarPergunta(Font customFont, Font chalkboyFont, Texture2D background, Q
         linha = strtok(NULL, "\n");
     }
 
-    DrawTextEx(chalkboyFont, "Sua resposta:", (Vector2){380, 280}, 27, 2, textColor);
-    DrawTextEx(chalkboyFont, respostaUsuario, (Vector2){600, 280}, 27, 2, textColor);
+    DrawTextEx(chalkboyFont, "Sua resposta:", (Vector2){380, 300}, 27, 2, textColor);
+    DrawTextEx(chalkboyFont, respostaUsuario, (Vector2){600, 300}, 27, 2, textColor);
 
     char strPontos[20], strVidas[20];
     sprintf(strPontos, "Pontos: %d", pontos);
     sprintf(strVidas, "Vidas: %d", vidas);
-    DrawTextEx(chalkboyFont, strPontos, (Vector2){380, SCREEN_HEIGHT - 310}, 22, 2, textColor);
+    DrawTextEx(chalkboyFont, strPontos, (Vector2){380, SCREEN_HEIGHT - 306}, 22, 2, textColor);
     DrawTextEx(chalkboyFont, strVidas, (Vector2){380, SCREEN_HEIGHT - 270}, 22, 2, textColor);
 
     int key = GetCharPressed();
@@ -120,8 +120,8 @@ void MenuPausa(Font customFont, Texture2D pauseImage, Color titleColor) {
 void TelaGameOver(Font customFont, Texture2D gameOverImage, Color titleColor) {
     ClearBackground(BLACK);
     DrawTexture(gameOverImage, (SCREEN_WIDTH - gameOverImage.width) / 2, (SCREEN_HEIGHT - gameOverImage.height) / 2, WHITE);
-    DrawTextEx(customFont, "GameOver!", (Vector2){SCREEN_WIDTH / 2 - 380, SCREEN_HEIGHT / 2 - 200}, 52, 2, titleColor);
-    DrawTextEx(customFont, "Clique na tela para reiniciar.", (Vector2){SCREEN_WIDTH / 2 - 390, SCREEN_HEIGHT / 2 - 120}, 20, 2, titleColor);
+    DrawTextEx(customFont, "GameOver!", (Vector2){SCREEN_WIDTH / 2 - 378, SCREEN_HEIGHT / 2 - 160}, 60, 2, PINK);
+    DrawTextEx(customFont, "Clique na tela para reiniciar.", (Vector2){SCREEN_WIDTH / 2 - 390, SCREEN_HEIGHT / 2 - 60}, 20, 2, PINK);
 }
 
 void TelaVitoria(Font customFont, Texture2D vitoriaImage, int pontos, float tempoJogo, Color titleColor) {
@@ -137,14 +137,14 @@ void TelaVitoria(Font customFont, Texture2D vitoriaImage, int pontos, float temp
 }
 
 void MostrarMensagemErro(Font customFont, Questao questoes[], int perguntaAtual, int selectedLevel, Color textColor) {
-    DrawTextEx(customFont, "Errado! A resposta era:", (Vector2){440, 310}, 23, 2, RED);
-    DrawTextEx(customFont, questoes[perguntaAtual].resposta, (Vector2){640, 350}, 27, 2, RED);
+    DrawTextEx(customFont, "Errado! A resposta era:", (Vector2){390, 265}, 23, 2, PINK);
+    DrawTextEx(customFont, questoes[perguntaAtual].resposta, (Vector2){620, 299}, 27, 2, PINK);
 }
 
 void TelaRascunho(Font customFont, Color titleColor, Texture2D folhaCaderno) {
     DrawTexture(folhaCaderno, rascunhoPos.x, rascunhoPos.y, WHITE);
 
-    
+
     // Desenhar com o mouse
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
         Vector2 mousePos = GetMousePosition();
@@ -208,7 +208,7 @@ int main(void) {
     Rectangle easyButton = { SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 50, 200, 50 };
     Rectangle mediumButton = { SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 + 20, 200, 50 };
     Rectangle hardButton = { SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 + 90, 200, 50 };
-    Rectangle rascunhoButton = { SCREEN_WIDTH - 150, 50, 120, 40 };
+    Rectangle rascunhoButton = { SCREEN_WIDTH - 620, 10, 170, 40 };
 
     bool exitGame = false;
     bool gameStarted = false;
