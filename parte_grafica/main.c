@@ -82,7 +82,7 @@ void MostrarPergunta(Font customFont, Font chalkboyFont, Texture2D background, Q
     }
 
     DrawTextEx(chalkboyFont, "Sua resposta:", (Vector2){380, 280}, 27, 2, textColor);
-    DrawTextEx(chalkboyFont, respostaUsuario, (Vector2){380, 340}, 27, 2, textColor);
+    DrawTextEx(chalkboyFont, respostaUsuario, (Vector2){600, 280}, 27, 2, textColor);
 
     // Mostrar pontuação e vidas
     char strPontos[20], strVidas[20];
@@ -123,7 +123,7 @@ void TelaGameOver(Font customFont, Texture2D gameOverImage, Color titleColor) {
 void TelaVitoria(Font customFont, Texture2D vitoriaImage, int pontos, float tempoJogo, Color titleColor) {
     ClearBackground(BLACK);
     DrawTexture(vitoriaImage, (SCREEN_WIDTH - vitoriaImage.width) / 2, (SCREEN_HEIGHT - vitoriaImage.height) / 2, WHITE);
-    DrawTextEx(customFont, "Parabens! Você venceu!", (Vector2){SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100}, 40, 2, titleColor);
+    DrawTextEx(customFont, "Parabens! Voce venceu!", (Vector2){SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100}, 40, 2, titleColor);
 
     char strPontos[50], strTempo[50];
     sprintf(strPontos, "Pontuacao final: %d", pontos);
