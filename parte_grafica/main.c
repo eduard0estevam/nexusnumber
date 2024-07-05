@@ -17,6 +17,8 @@ Vector2 rascunhoPos = {100, 100};
 Vector2 mouseOffset = {0, 0};
 RenderTexture2D rascunhoTarget;
 
+void LimparRascunho();
+
 // Estrutura para armazenar perguntas e respostas
 typedef struct {
     char pergunta[256];
@@ -144,11 +146,10 @@ void MostrarMensagemErro(Font customFont, Questao questoes[], int perguntaAtual,
 void TelaRascunho(Font customFont, Color titleColor, Texture2D folhaCaderno) {
     DrawTexture(folhaCaderno, rascunhoPos.x, rascunhoPos.y, WHITE);
 
-
     // Desenhar com o mouse
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
         Vector2 mousePos = GetMousePosition();
-        if (CheckCollisionPointRec(mousePos, (Rectangle){rascunhoPos.x, rascunhoPos.y, 444, 385})) {
+        if (CheckCollisionPointRec(mousePos, (Rectangle){rascunhoPos.x, rascunhoPos.y, 800, 600})) {
             BeginTextureMode(rascunhoTarget);
             DrawCircleV((Vector2){mousePos.x - rascunhoPos.x, mousePos.y - rascunhoPos.y}, 5, BLACK);
             EndTextureMode();
@@ -156,7 +157,7 @@ void TelaRascunho(Font customFont, Color titleColor, Texture2D folhaCaderno) {
     }
 
     // Movendo a tela de rascunho
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), (Rectangle){rascunhoPos.x, rascunhoPos.y, 444, 30})) {
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), (Rectangle){rascunhoPos.x, rascunhoPos.y, 800, 30})) {
         rascunhoMovendo = true;
         mouseOffset = (Vector2){GetMousePosition().x - rascunhoPos.x, GetMousePosition().y - rascunhoPos.y};
     }
@@ -170,6 +171,17 @@ void TelaRascunho(Font customFont, Color titleColor, Texture2D folhaCaderno) {
 
     // Renderizando o rascunho
     DrawTextureRec(rascunhoTarget.texture, (Rectangle){0, 0, rascunhoTarget.texture.width, -rascunhoTarget.texture.height}, rascunhoPos, WHITE);
+
+    // Limpar rascunho quando clicar em um botão específico
+    if (CheckCollisionPointRec(GetMousePosition(), (Rectangle){SCREEN_WIDTH - 250, 10, 200, 40}) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        LimparRascunho();  // Chama a função para limpar o rascunho
+    }
+}
+
+void LimparRascunho() {
+    BeginTextureMode(rascunhoTarget);
+    ClearBackground(RAYWHITE);  // Limpa a textura de renderização do rascunho
+    EndTextureMode();
 }
 
 int main(void) {
@@ -183,7 +195,7 @@ int main(void) {
     Texture2D easyBackground = LoadTexture("./imagens/facil.png");
     Texture2D loadingImage = LoadTexture("./imagens/carregamento.png");
     Texture2D mediumBackground = LoadTexture("./imagens/medio.png");
-    Texture2D hardBackground = LoadTexture("./imagens/hardi.png");
+    Texture2D hardBackground = LoadTexture("./imagens/difficil.png");
     Texture2D pauseImage = LoadTexture("./imagens/pause.png");
     Texture2D gameOverImage = LoadTexture("./imagens/gameover.png");
     Texture2D vitoriaImage = LoadTexture("./imagens/vitoria.png");
@@ -243,8 +255,8 @@ int main(void) {
 
     Questao questoesDificeis[5] = {
         {"1- 9, 16 = 7 | 4, 36 = 8 | 121, 81 = 20 |25, 49 = ?", "12"},
-        {"2- Em um sistema de codificacao, AB eh o dia do\n nascimento de uma pessoa e CD eh seu mes\n de nascimento.Qual eh o mes de nascimento dessa pessoa se a\n data for trinta de julho?", "07"},
-        {"3- Se 3 gatos caca, 3 ratos em 3 minutos, em\n quantos minutos levarão 100 gatos para cacar\n 100 ratos?", "3"},
+        {"2- No meu jardim tem 4 pes de manga e 3 pes\n de acerola quantos pes eu tenho?", "2"},
+        {"3- Se 3 gatos caca, 3 ratos em 3 minutos, em\n quantos minutos levarao 100 gatos para cacar\n 100 ratos?", "3"},
         {"4- Um carro viaja a 60 km/h. Em quantas horas\n levara para percorrer 180 km?", "3"},
         {"5- Se a=1, b=2, c=3, ..., z=26, qual eh a soma\n das letras da palavra CAT?", "24"},
     };
@@ -257,7 +269,7 @@ int main(void) {
     int perguntaAtual = 0;
     char respostaUsuario[256] = "";
 
-    rascunhoTarget = LoadRenderTexture(444, 385);
+    rascunhoTarget = LoadRenderTexture(800, 600); // Alterar tamanho do rascunho
     BeginTextureMode(rascunhoTarget);
     ClearBackground(RAYWHITE);
     EndTextureMode();
@@ -424,6 +436,10 @@ int main(void) {
                 TelaRascunho(customFont, titleColor, folhaCaderno);
                 if (IsKeyPressed(KEY_V)) {
                     rascunhoAtivo = false;
+                }
+
+                if (IsKeyPressed(KEY_C)) {
+                    LimparRascunho();
                 }
             }
         }
