@@ -9,6 +9,8 @@ int vidas = 3;
 int pontos = 0;
 float tempoJogo = 0.0f;
 bool vitoria = false;
+bool erro = false;  // Variável para controlar a exibição da mensagem de erro
+float tempoErro = 0.0f;  // Variável para controlar o tempo de exibição da mensagem de erro
 
 // Estrutura para armazenar perguntas e respostas
 typedef struct {
@@ -74,7 +76,7 @@ void MostrarPergunta(Font customFont, Font chalkboyFont, Texture2D background, Q
     char pergunta[256];
     strcpy(pergunta, questoes[perguntaAtual].pergunta);
     char *linha = strtok(pergunta, "\n");
-    int y = 140;
+    int y = 150;
     while (linha != NULL) {
         DrawTextEx(chalkboyFont, linha, (Vector2){125, y}, 27, 2, textColor);
         y += 30; // Ajustar o espaçamento entre linhas conforme necessário
@@ -88,8 +90,8 @@ void MostrarPergunta(Font customFont, Font chalkboyFont, Texture2D background, Q
     char strPontos[20], strVidas[20];
     sprintf(strPontos, "Pontos: %d", pontos);
     sprintf(strVidas, "Vidas: %d", vidas);
-    DrawTextEx(customFont, strPontos, (Vector2){380, SCREEN_HEIGHT - 310}, 20, 2, textColor);
-    DrawTextEx(customFont, strVidas, (Vector2){380, SCREEN_HEIGHT - 270}, 20, 2, textColor);
+    DrawTextEx(chalkboyFont, strPontos, (Vector2){380, SCREEN_HEIGHT - 310}, 20, 2, textColor);
+    DrawTextEx(chalkboyFont, strVidas, (Vector2){380, SCREEN_HEIGHT - 270}, 20, 2, textColor);
 
     // Captura a resposta do usuário
     int key = GetCharPressed();
@@ -123,13 +125,24 @@ void TelaGameOver(Font customFont, Texture2D gameOverImage, Color titleColor) {
 void TelaVitoria(Font customFont, Texture2D vitoriaImage, int pontos, float tempoJogo, Color titleColor) {
     ClearBackground(BLACK);
     DrawTexture(vitoriaImage, (SCREEN_WIDTH - vitoriaImage.width) / 2, (SCREEN_HEIGHT - vitoriaImage.height) / 2, WHITE);
-    DrawTextEx(customFont, "Parabens! Voce venceu!", (Vector2){SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100}, 40, 2, titleColor);
+    DrawTextEx(customFont, "Parabens! Você venceu!", (Vector2){SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100}, 40, 2, titleColor);
 
     char strPontos[50], strTempo[50];
     sprintf(strPontos, "Pontuacao final: %d", pontos);
     sprintf(strTempo, "Tempo de jogo: %.2f segundos", tempoJogo);
     DrawTextEx(customFont, strPontos, (Vector2){SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 + 20}, 30, 2, titleColor);
     DrawTextEx(customFont, strTempo, (Vector2){SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 + 60}, 30, 2, titleColor);
+}
+
+void MostrarMensagemErro(Font customFont, Questao questoes[], int perguntaAtual, int selectedLevel, Color textColor) {
+    DrawTextEx(customFont, "Voce errou! A resposta era:", (Vector2){350, 380}, 27, 2, RED);
+    if (selectedLevel == 1) {
+        DrawTextEx(customFont, questoes[perguntaAtual].resposta, (Vector2){350, 420}, 27, 2, RED);
+    } else if (selectedLevel == 2) {
+        DrawTextEx(customFont, questoes[perguntaAtual].resposta, (Vector2){350, 420}, 27, 2, RED);
+    } else if (selectedLevel == 3) {
+        DrawTextEx(customFont, questoes[perguntaAtual].resposta, (Vector2){350, 420}, 27, 2, RED);
+    }
 }
 
 int main(void) {
@@ -187,7 +200,7 @@ int main(void) {
     int selectedLevel = 0;
     float loadingTimer = 0;
 
-    Questao questoesFaceis[10] = { 
+  Questao questoesFaceis[10] = { 
         {"1- 2, 6, 12, 20, 30, ? Qual eh o proximo numero\nna sequencia?", "42"},
         {"2- A soma das idades de Ana e Bia eh 44. Ana eh\n 8 anos mais velha que Bia. Qual\n eh a idade de Ana?", "26"},
         {"3- 13, 18 = 31 | 7, 25 = 32 | 12, 30 = 42 | 26, 13 = ?", "39"},
@@ -215,6 +228,7 @@ int main(void) {
         {"4- Um carro viaja a 60 km/h. Em quantas horas\n levara para percorrer 180 km?", "3"},
         {"5- Se a=1, b=2, c=3, ..., z=26, qual eh a soma\n das letras da palavra CAT?", "24"},
     };
+
 
     // Embaralha as perguntas
     srand(time(NULL));
@@ -355,17 +369,11 @@ int main(void) {
                         (selectedLevel == 2 && strcmp(respostaUsuario, questoesMedias[perguntaAtual].resposta) == 0) ||
                         (selectedLevel == 3 && strcmp(respostaUsuario, questoesDificeis[perguntaAtual].resposta) == 0)) {
                         pontos += 10;
+                        erro = false;
                     } else {
                         vidas -= 1;
-                        // Mostrar mensagem de erro
-                        DrawTextEx(customFont, "Voce errou! A resposta era:", (Vector2){350, 380}, 27, 2, RED);
-                        if (selectedLevel == 1) {
-                            DrawTextEx(customFont, questoesFaceis[perguntaAtual].resposta, (Vector2){350, 420}, 27, 2, RED);
-                        } else if (selectedLevel == 2) {
-                            DrawTextEx(customFont, questoesMedias[perguntaAtual].resposta, (Vector2){350, 420}, 27, 2, RED);
-                        } else if (selectedLevel == 3) {
-                            DrawTextEx(customFont, questoesDificeis[perguntaAtual].resposta, (Vector2){350, 420}, 27, 2, RED);
-                        }
+                        erro = true;
+                        tempoErro = 0.0f;
                     }
                     perguntaAtual++;
                     respostaUsuario[0] = '\0'; // Limpa a resposta do usuário
@@ -375,6 +383,14 @@ int main(void) {
                         } else {
                             vitoria = true;
                         }
+                    }
+                }
+
+                if (erro) {
+                    tempoErro += GetFrameTime();
+                    MostrarMensagemErro(customFont, questoesFaceis, perguntaAtual - 1, selectedLevel, RED);
+                    if (tempoErro >= 3.0f) {
+                        erro = false;
                     }
                 }
             }
