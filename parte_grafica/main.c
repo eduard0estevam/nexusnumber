@@ -63,7 +63,7 @@ void MenuPrincipal(Font customFont, Texture2D background, Rectangle enterButton,
     DrawRectangleRec(exitButton, exitButtonColor);
     DrawTextEx(customFont, "Sair", (Vector2){exitButton.x + 50, exitButton.y + 10}, 30, 2, exitButtonTextColor);
     DrawRectangleRec(rankingButton, rankingButtonColor);
-    DrawTextEx(customFont, "Ranking", (Vector2){rankingButton.x + 28, rankingButton.y + 10}, 30, 2, rankingButtonTextColor);
+    DrawTextEx(customFont, "Ranking", (Vector2){rankingButton.x + 15, rankingButton.y + 10}, 30, 2, rankingButtonTextColor);
 }
 
 void Carregando(Font customFont, Texture2D loadingImage, Color titleColor) {
@@ -88,9 +88,9 @@ void MostrarNiveis(Font customFont, Texture2D background, Rectangle easyButton, 
 void EntradaNomeJogador(Font customFont, Color titleColor, Texture2D background) {
     ClearBackground(RAYWHITE);
     DrawTexture(background, 0, 0, WHITE);
-    DrawTextEx(customFont, "Digite seu nome:", (Vector2){SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - 40}, 30, 2, titleColor);
-    DrawRectangle(SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2, 400, 40, LIGHTGRAY);
-    DrawTextEx(customFont, nomeJogador, (Vector2){SCREEN_WIDTH / 2 - 190, SCREEN_HEIGHT / 2 + 5}, 30, 2, BLACK);
+    DrawTextEx(customFont, "Digite seu nome:", (Vector2){SCREEN_WIDTH / 2 - 190, SCREEN_HEIGHT / 2 - 90}, 30, 2, PINK);
+    DrawRectangle(SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 45, 400, 40, WHITE);
+    DrawTextEx(customFont, nomeJogador, (Vector2){SCREEN_WIDTH / 2 - 190, SCREEN_HEIGHT / 2 - 40}, 30, 2, PINK);
 
     int key = GetCharPressed();
     while (key > 0) {
@@ -213,7 +213,7 @@ void TelaGameOver(Font customFont, Texture2D gameOverImage, int pontos, float te
 void TelaVitoria(Font customFont, Texture2D vitoriaImage, int pontos, float tempoJogo, Color titleColor) {
     ClearBackground(BLACK);
     DrawTexture(vitoriaImage, (SCREEN_WIDTH - vitoriaImage.width) / 2, (SCREEN_HEIGHT - vitoriaImage.height) / 2, WHITE);
-    DrawTextEx(customFont, "Parabens! Você venceu!", (Vector2){SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100}, 40, 2, titleColor);
+    DrawTextEx(customFont, "Parabens! Voce venceu!", (Vector2){SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100}, 40, 2, titleColor);
 
     int minutos = (int)tempoJogo / 60;
     int segundos = (int)tempoJogo % 60;
@@ -274,7 +274,7 @@ int main(void) {
     Font chalkboyFont = LoadFontEx("Neat Chalk.ttf", 30, NULL, 0);
 
     Texture2D background = LoadTexture("./imagens/menu.png");
-    Texture2D easyBackground = LoadTexture("./imagens/facil.png");
+    Texture2D easyBackground = LoadTexture("./imagens/facill.png");
     Texture2D loadingImage = LoadTexture("./imagens/carregamento.png");
     Texture2D mediumBackground = LoadTexture("./imagens/medio.png");
     Texture2D hardBackground = LoadTexture("./imagens/difficil.png");
@@ -282,8 +282,8 @@ int main(void) {
     Texture2D gameOverImage = LoadTexture("./imagens/gameover.png");
     Texture2D vitoriaImage = LoadTexture("./imagens/venceu.png");
     Texture2D folhaCaderno = LoadTexture("./imagens/rascunhoo.png");
-    Texture2D rankingBackground = LoadTexture("./imagens/ranking.png");
-    Texture2D nomeBackground = LoadTexture("./imagens/nome.png");
+    Texture2D rankingBackground = LoadTexture("./imagens/ranking11.png");
+    Texture2D nomeBackground = LoadTexture("./imagens/name.png");
 
     Music music = LoadMusicStream("./audio/musica.ogg");
     SetMusicVolume(music, 0.5f);
