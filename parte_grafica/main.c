@@ -122,11 +122,17 @@ void MenuPausa(Font customFont, Texture2D pauseImage, Color titleColor) {
     DrawTextEx(customFont, "Pressione P para continuar", (Vector2){SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 + 20}, 20, 2, titleColor);
 }
 
-void TelaGameOver(Font customFont, Texture2D gameOverImage, Color titleColor) {
+void TelaGameOver(Font customFont, Texture2D gameOverImage, int pontos, float tempoJogo, Color titleColor) {
     ClearBackground(BLACK);
     DrawTexture(gameOverImage, (SCREEN_WIDTH - gameOverImage.width) / 2, (SCREEN_HEIGHT - gameOverImage.height) / 2, WHITE);
-    DrawTextEx(customFont, "GameOver!", (Vector2){SCREEN_WIDTH / 2 - 378, SCREEN_HEIGHT / 2 - 160}, 60, 2, PINK);
+    DrawTextEx(customFont, "GameOver!", (Vector2){SCREEN_WIDTH / 2 - 378, SCREEN_HEIGHT / 2 - 140}, 60, 2, PINK);
     DrawTextEx(customFont, "Clique na tela para reiniciar.", (Vector2){SCREEN_WIDTH / 2 - 390, SCREEN_HEIGHT / 2 - 60}, 20, 2, PINK);
+
+    char strPontos[50], strTempo[50];
+    sprintf(strPontos, "Pontuacao final: %d", pontos);
+    sprintf(strTempo, "Tempo de jogo: %.2f", tempoJogo);
+    DrawTextEx(customFont, strPontos, (Vector2){SCREEN_WIDTH / 2 - 370, SCREEN_HEIGHT / 2 - 180}, 23, 2, PINK);
+    DrawTextEx(customFont, strTempo, (Vector2){SCREEN_WIDTH / 2 - 378, SCREEN_HEIGHT / 2 - 220}, 23, 2, PINK);
 }
 
 void TelaVitoria(Font customFont, Texture2D vitoriaImage, int pontos, float tempoJogo, Color titleColor) {
@@ -201,7 +207,7 @@ int main(void) {
     Texture2D hardBackground = LoadTexture("./imagens/difficil.png");
     Texture2D pauseImage = LoadTexture("./imagens/pause.png");
     Texture2D gameOverImage = LoadTexture("./imagens/gameover.png");
-    Texture2D vitoriaImage = LoadTexture("./imagens/vitoria.png");
+    Texture2D vitoriaImage = LoadTexture("./imagens/venceu.png");
     Texture2D folhaCaderno = LoadTexture("./imagens/rascunhoo.png");
     Music music = LoadMusicStream("./audio/musica.ogg");
     SetMusicVolume(music, 0.5f);
@@ -238,7 +244,7 @@ int main(void) {
     Questao questoesFaceis[10] = { 
         {"1- 2, 6, 12, 20, 30, ? Qual eh o proximo numero\nna sequencia?", "42"},
         {"2- A soma das idades de Ana e Bia eh 44. Ana eh\n 8 anos mais velha que Bia. Qual\n eh a idade de Ana?", "26"},
-        {"3- 13, 18 = 31 | 7, 25 = 32 | 12, 30 = 42 | 26, 13 = ?", "39"},
+        {"3- 13 ? 18 = 31 | 7 ? 25 = 32 | 12 ? 30 = 42 | 26 ? 13 = ?", "39"},
         {"4- Qual eh o proximo numero\n na sequencia: 1, 4, 9, 16, 25, ...?\n", "36"},
         {"5- Joao tem o dobro da idade de Pedro. Se\n a diferenca de suas idades eh de 15 anos, quantos\n anos Joao tem?", "30"},
         {"6- 4, 8 e 16: Qual eh o proximo numero?", "32"},
@@ -292,7 +298,7 @@ int main(void) {
         if (paused) {
             MenuPausa(customFont, pauseImage, titleColor);
         } else if (gameOver) {
-            TelaGameOver(customFont, gameOverImage, titleColor);
+            TelaGameOver(customFont, gameOverImage, pontos, tempoJogo, titleColor);
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                 gameStarted = false;
                 showingLevelButtons = false;
