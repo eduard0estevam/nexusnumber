@@ -14,7 +14,14 @@ float tempoErro = 0.0f;
 bool rascunhoAtivo = false;
 bool rascunhoMovendo = false;
 bool aceitandoResposta = true;
-bool tempoParado = false; // Variável para controlar a parada do tempo
+bool tempoParado = false;
+bool mostrandoRanking = false;
+bool entrandoNome = false;
+bool loading = false;
+bool loadingComplete = false;
+bool paused = false;
+bool gameOver = false;
+char nomeJogador[256] = "";
 Vector2 rascunhoPos = {100, 100};
 Vector2 mouseOffset = {0, 0};
 RenderTexture2D rascunhoTarget;
@@ -26,6 +33,11 @@ typedef struct {
     char pergunta[256];
     char resposta[256];
 } Questao;
+
+typedef struct {
+    char nome[256];
+    int pontuacao;
+} Jogador;
 
 void trocar(Questao *a, Questao *b) {
     Questao temp = *a;
@@ -43,13 +55,15 @@ void embaralhar(Questao questoes[], int n) {
 #define SCREEN_WIDTH 1000
 #define SCREEN_HEIGHT 650
 
-void MenuPrincipal(Font customFont, Texture2D background, Rectangle enterButton, Rectangle exitButton, Color enterButtonColor, Color enterButtonTextColor, Color exitButtonColor, Color exitButtonTextColor, Color titleColor) {
+void MenuPrincipal(Font customFont, Texture2D background, Rectangle enterButton, Rectangle exitButton, Rectangle rankingButton, Color enterButtonColor, Color enterButtonTextColor, Color exitButtonColor, Color exitButtonTextColor, Color rankingButtonColor, Color rankingButtonTextColor, Color titleColor) {
     DrawTexture(background, 0, 0, WHITE);
     DrawTextEx(customFont, "NexusNumber", (Vector2){SCREEN_WIDTH / 2 - 230, 170}, 50, 2, titleColor);
     DrawRectangleRec(enterButton, enterButtonColor);
     DrawTextEx(customFont, "Entrar", (Vector2){enterButton.x + 28, enterButton.y + 10}, 30, 2, enterButtonTextColor);
     DrawRectangleRec(exitButton, exitButtonColor);
-    DrawTextEx(customFont, "Sair", (Vector2){exitButton.x + 50, enterButton.y + 80}, 30, 2, exitButtonTextColor);
+    DrawTextEx(customFont, "Sair", (Vector2){exitButton.x + 50, exitButton.y + 10}, 30, 2, exitButtonTextColor);
+    DrawRectangleRec(rankingButton, rankingButtonColor);
+    DrawTextEx(customFont, "Ranking", (Vector2){rankingButton.x + 28, rankingButton.y + 10}, 30, 2, rankingButtonTextColor);
 }
 
 void Carregando(Font customFont, Texture2D loadingImage, Color titleColor) {
@@ -69,6 +83,64 @@ void MostrarNiveis(Font customFont, Texture2D background, Rectangle easyButton, 
     DrawTextEx(customFont, "Dificil", (Vector2){hardButton.x + 36, hardButton.y + 10}, 30, 2, levelButtonTextColor);
 
     DrawTextEx(customFont, "< Voltar", (Vector2){10, 10}, 22, 2, titleColor);
+}
+
+void EntradaNomeJogador(Font customFont, Color titleColor, Texture2D background) {
+    ClearBackground(RAYWHITE);
+    DrawTexture(background, 0, 0, WHITE);
+    DrawTextEx(customFont, "Digite seu nome:", (Vector2){SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - 40}, 30, 2, titleColor);
+    DrawRectangle(SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2, 400, 40, LIGHTGRAY);
+    DrawTextEx(customFont, nomeJogador, (Vector2){SCREEN_WIDTH / 2 - 190, SCREEN_HEIGHT / 2 + 5}, 30, 2, BLACK);
+
+    int key = GetCharPressed();
+    while (key > 0) {
+        if (key >= 32 && key <= 125 && strlen(nomeJogador) < 255) {
+            int len = strlen(nomeJogador);
+            nomeJogador[len] = (char)key;
+            nomeJogador[len + 1] = '\0';
+        }
+        key = GetCharPressed();
+    }
+    if (IsKeyPressed(KEY_BACKSPACE) && strlen(nomeJogador) > 0) {
+        nomeJogador[strlen(nomeJogador) - 1] = '\0';
+    }
+    if (IsKeyPressed(KEY_ENTER) && strlen(nomeJogador) > 0) {
+        entrandoNome = false;
+        loading = true;
+    }
+}
+
+void MostrarRanking(Font customFont, Color titleColor, Texture2D background) {
+    ClearBackground(RAYWHITE);
+    DrawTexture(background, 0, 0, WHITE);
+    DrawTextEx(customFont, "Ranking", (Vector2){SCREEN_WIDTH / 2 - 60, 40}, 40, 2, titleColor);
+
+    FILE *file = fopen("pontuacoes.txt", "r");
+    if (file == NULL) {
+        DrawTextEx(customFont, "Nenhum ranking disponível.", (Vector2){SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2}, 30, 2, titleColor);
+        return;
+    }
+
+    char linha[256];
+    int y = 100;
+    while (fgets(linha, sizeof(linha), file)) {
+        DrawTextEx(customFont, linha, (Vector2){50, y}, 20, 2, titleColor);
+        y += 30;
+    }
+    fclose(file);
+
+    DrawTextEx(customFont, "Pressione ENTER para voltar", (Vector2){SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT - 60}, 20, 2, titleColor);
+    if (IsKeyPressed(KEY_ENTER)) {
+        mostrandoRanking = false;
+    }
+}
+
+void SalvarPontuacao(char *nome, int pontuacao) {
+    FILE *file = fopen("pontuacoes.txt", "a");
+    if (file != NULL) {
+        fprintf(file, "%s - %d\n", nome, pontuacao);
+        fclose(file);
+    }
 }
 
 void MostrarPergunta(Font customFont, Font chalkboyFont, Texture2D background, Questao questoes[], int perguntaAtual, char respostaUsuario[], int pontos, int vidas, Color textColor, Color titleColor, Rectangle rascunhoButton, Color buttonColor, Color buttonTextColor) {
@@ -160,7 +232,6 @@ void MostrarMensagemErro(Font customFont, Questao questoes[], int perguntaAtual,
 void TelaRascunho(Font customFont, Color titleColor, Texture2D folhaCaderno) {
     DrawTexture(folhaCaderno, rascunhoPos.x, rascunhoPos.y, WHITE);
 
-    // Desenhar com o mouse
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
         Vector2 mousePos = GetMousePosition();
         if (CheckCollisionPointRec(mousePos, (Rectangle){rascunhoPos.x, rascunhoPos.y, 800, 600})) {
@@ -170,7 +241,6 @@ void TelaRascunho(Font customFont, Color titleColor, Texture2D folhaCaderno) {
         }
     }
 
-    // Movendo a tela de rascunho
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), (Rectangle){rascunhoPos.x, rascunhoPos.y, 800, 30})) {
         rascunhoMovendo = true;
         mouseOffset = (Vector2){GetMousePosition().x - rascunhoPos.x, GetMousePosition().y - rascunhoPos.y};
@@ -183,10 +253,8 @@ void TelaRascunho(Font customFont, Color titleColor, Texture2D folhaCaderno) {
         }
     }
 
-    // Renderizando o rascunho
     DrawTextureRec(rascunhoTarget.texture, (Rectangle){0, 0, rascunhoTarget.texture.width, -rascunhoTarget.texture.height}, rascunhoPos, WHITE);
 
-    // Limpar rascunho quando clicar em um botão específico
     if (CheckCollisionPointRec(GetMousePosition(), (Rectangle){SCREEN_WIDTH - 250, 10, 200, 40}) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         LimparRascunho();
     }
@@ -214,6 +282,9 @@ int main(void) {
     Texture2D gameOverImage = LoadTexture("./imagens/gameover.png");
     Texture2D vitoriaImage = LoadTexture("./imagens/venceu.png");
     Texture2D folhaCaderno = LoadTexture("./imagens/rascunhoo.png");
+    Texture2D rankingBackground = LoadTexture("./imagens/ranking.png");
+    Texture2D nomeBackground = LoadTexture("./imagens/nome.png");
+
     Music music = LoadMusicStream("./audio/musica.ogg");
     SetMusicVolume(music, 0.5f);
     PlayMusicStream(music);
@@ -225,12 +296,15 @@ int main(void) {
     Color enterButtonTextColor = WHITE;
     Color exitButtonColor = PINK;
     Color exitButtonTextColor = WHITE;
+    Color rankingButtonColor = PINK;
+    Color rankingButtonTextColor = WHITE;
     Color levelButtonColor = PINK;
     Color levelButtonTextColor = WHITE;
     Color titleColor = (Color){233, 30, 99, 255};
 
     Rectangle enterButton = { SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 50, 200, 50 };
     Rectangle exitButton = { SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 + 20, 200, 50 };
+    Rectangle rankingButton = { SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 + 90, 200, 50 };
     Rectangle easyButton = { SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 50, 200, 50 };
     Rectangle mediumButton = { SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 + 20, 200, 50 };
     Rectangle hardButton = { SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 + 90, 200, 50 };
@@ -239,10 +313,6 @@ int main(void) {
     bool exitGame = false;
     bool gameStarted = false;
     bool showingLevelButtons = false;
-    bool loading = false;
-    bool loadingComplete = false;
-    bool paused = false;
-    bool gameOver = false;
     int selectedLevel = 0;
     float loadingTimer = 0;
 
@@ -304,6 +374,10 @@ int main(void) {
 
         if (paused) {
             MenuPausa(customFont, pauseImage, titleColor);
+        } else if (mostrandoRanking) {
+            MostrarRanking(customFont, titleColor, rankingBackground);
+        } else if (entrandoNome) {
+            EntradaNomeJogador(customFont, titleColor, nomeBackground);
         } else if (gameOver) {
             TelaGameOver(customFont, gameOverImage, pontos, tempoJogo, titleColor);
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
@@ -338,7 +412,7 @@ int main(void) {
             }
         } else {
             if (!gameStarted) {
-                MenuPrincipal(customFont, background, enterButton, exitButton, enterButtonColor, enterButtonTextColor, exitButtonColor, exitButtonTextColor, titleColor);
+                MenuPrincipal(customFont, background, enterButton, exitButton, rankingButton, enterButtonColor, enterButtonTextColor, exitButtonColor, exitButtonTextColor, rankingButtonColor, rankingButtonTextColor, titleColor);
                 if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                     Vector2 mousePoint = GetMousePosition();
                     if (CheckCollisionPointRec(mousePoint, enterButton)) {
@@ -347,6 +421,9 @@ int main(void) {
                         PlaySound(clickSound);
                     } else if (CheckCollisionPointRec(mousePoint, exitButton)) {
                         exitGame = true;
+                    } else if (CheckCollisionPointRec(mousePoint, rankingButton)) {
+                        mostrandoRanking = true;
+                        PlaySound(clickSound);
                     }
                 }
             } else if (showingLevelButtons) {
@@ -355,17 +432,17 @@ int main(void) {
                     Vector2 mousePoint = GetMousePosition();
                     if (CheckCollisionPointRec(mousePoint, easyButton)) {
                         selectedLevel = 1;
-                        loading = true;
+                        entrandoNome = true;
                         showingLevelButtons = false;
                         PlaySound(clickSound);
                     } else if (CheckCollisionPointRec(mousePoint, mediumButton)) {
                         selectedLevel = 2;
-                        loading = true;
+                        entrandoNome = true;
                         showingLevelButtons = false;
                         PlaySound(clickSound);
                     } else if (CheckCollisionPointRec(mousePoint, hardButton)) {
                         selectedLevel = 3;
-                        loading = true;
+                        entrandoNome = true;
                         showingLevelButtons = false;
                         PlaySound(clickSound);
                     } else if (mousePoint.x >= 10 && mousePoint.x <= 110 && mousePoint.y >= 10 && mousePoint.y <= 30) {
@@ -437,7 +514,8 @@ int main(void) {
                     perguntaAtual++;
                     respostaUsuario[0] = '\0';
                     if (perguntaAtual >= 10 || vidas <= 0) {
-                        tempoParado = true; // Parar o tempo quando o jogo acaba
+                        tempoParado = true;
+                        SalvarPontuacao(nomeJogador, pontos);
                         if (vidas <= 0) {
                             gameOver = true;
                         } else {
@@ -481,10 +559,13 @@ int main(void) {
     UnloadTexture(gameOverImage);
     UnloadTexture(vitoriaImage);
     UnloadTexture(folhaCaderno);
+    UnloadTexture(rankingBackground);
+    UnloadTexture(nomeBackground);
     UnloadMusicStream(music);
     UnloadSound(clickSound);
     UnloadRenderTexture(rascunhoTarget);
 
+    CloseAudioDevice();
     CloseWindow();
 
     return 0;
