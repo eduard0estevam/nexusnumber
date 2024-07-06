@@ -86,7 +86,7 @@ void MostrarNiveis(Font customFont, Texture2D background, Rectangle easyButton, 
     DrawTextEx(customFont, "< Voltar", (Vector2){10, 10}, 22, 2, titleColor);
 }
 
-void EntradaNomeJogador(Font customFont, Color titleColor, Texture2D background) {
+void EntradaNomeJogador(Font customFont, Color titleColor, Texture2D background, Sound clickSound) {
     ClearBackground(RAYWHITE);
     DrawTexture(background, 0, 0, WHITE);
     DrawTextEx(customFont, "Digite seu nome:", (Vector2){SCREEN_WIDTH / 2 - 190, SCREEN_HEIGHT / 2 - 90}, 30, 2, PINK);
@@ -119,6 +119,7 @@ void EntradaNomeJogador(Font customFont, Color titleColor, Texture2D background)
         if (mousePoint.x >= 10 && mousePoint.x <= 110 && mousePoint.y >= 10 && mousePoint.y <= 30) {
             entrandoNome = false;
             showingLevelButtons = true;
+            PlaySound(clickSound);
         }
     }
 }
@@ -226,15 +227,16 @@ void TelaGameOver(Font customFont, Texture2D gameOverImage, int pontos, float te
 void TelaVitoria(Font customFont, Texture2D vitoriaImage, int pontos, float tempoJogo, Color titleColor) {
     ClearBackground(BLACK);
     DrawTexture(vitoriaImage, (SCREEN_WIDTH - vitoriaImage.width) / 2, (SCREEN_HEIGHT - vitoriaImage.height) / 2, WHITE);
-    DrawTextEx(customFont, "Parabens! Voce venceu!", (Vector2){SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100}, 40, 2, titleColor);
+    DrawTextEx(customFont, "Parabens! Voce venceu!", (Vector2){SCREEN_WIDTH / 2 - 135, SCREEN_HEIGHT / 2 - 50}, 30, 2, PINK);
+    DrawTextEx(customFont, "clique na tela para continuar", (Vector2){SCREEN_WIDTH / 2 - 135, SCREEN_HEIGHT / 2 + 160}, 20, 2, PINK);
 
     int minutos = (int)tempoJogo / 60;
     int segundos = (int)tempoJogo % 60;
     char strPontos[50], strTempo[50];
     sprintf(strPontos, "Pontuacao final: %d", pontos);
     sprintf(strTempo, "Tempo de jogo: %02d:%02d", minutos, segundos);
-    DrawTextEx(customFont, strPontos, (Vector2){SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 + 20}, 30, 2, titleColor);
-    DrawTextEx(customFont, strTempo, (Vector2){SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 + 60}, 30, 2, titleColor);
+    DrawTextEx(customFont, strPontos, (Vector2){SCREEN_WIDTH / 2 - 135, SCREEN_HEIGHT / 2 + 8}, 30, 2, PINK);
+    DrawTextEx(customFont, strTempo, (Vector2){SCREEN_WIDTH / 2 - 135, SCREEN_HEIGHT / 2 + 60}, 30, 2, PINK);
 }
 
 void MostrarMensagemErro(Font customFont, Questao questoes[], int perguntaAtual, int selectedLevel, Color textColor) {
@@ -293,16 +295,18 @@ int main(void) {
     Texture2D hardBackground = LoadTexture("./imagens/difficil.png");
     Texture2D pauseImage = LoadTexture("./imagens/pause.png");
     Texture2D gameOverImage = LoadTexture("./imagens/gameover.png");
-    Texture2D vitoriaImage = LoadTexture("./imagens/venceu.png");
+    Texture2D vitoriaImage = LoadTexture("./imagens/vvenceuu.png");
     Texture2D folhaCaderno = LoadTexture("./imagens/rascunhoo.png");
     Texture2D rankingBackground = LoadTexture("./imagens/ranking11.png");
-    Texture2D nomeBackground = LoadTexture("./imagens/name.png");
+    Texture2D nomeBackground = LoadTexture("./imagens/nome11.png");
 
     Music music = LoadMusicStream("./audio/musica.ogg");
     SetMusicVolume(music, 0.5f);
     PlayMusicStream(music);
     Sound clickSound = LoadSound("./audio/click.wav");
+    Sound venceuSound = LoadSound("./audio/acerto.wav");
     SetSoundVolume(clickSound, 0.5f);
+    SetSoundVolume(venceuSound, 0.5f);
 
     Color textColor = WHITE;
     Color enterButtonColor = PINK;
@@ -389,7 +393,7 @@ int main(void) {
         } else if (mostrandoRanking) {
             MostrarRanking(customFont, titleColor, rankingBackground);
         } else if (entrandoNome) {
-            EntradaNomeJogador(customFont, titleColor, nomeBackground);
+            EntradaNomeJogador(customFont, titleColor, nomeBackground, clickSound);
         } else if (gameOver) {
             TelaGameOver(customFont, gameOverImage, pontos, tempoJogo, titleColor);
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
@@ -433,6 +437,7 @@ int main(void) {
                         PlaySound(clickSound);
                     } else if (CheckCollisionPointRec(mousePoint, exitButton)) {
                         exitGame = true;
+                        PlaySound(clickSound);
                     } else if (CheckCollisionPointRec(mousePoint, rankingButton)) {
                         mostrandoRanking = true;
                         PlaySound(clickSound);
@@ -487,6 +492,7 @@ int main(void) {
                         loadingComplete = false;
                         respostaUsuario[0] = '\0';
                         PlaySound(clickSound);
+                       
                     }
 
                     if (mousePoint.x >= SCREEN_WIDTH - 150 && mousePoint.x <= SCREEN_WIDTH - 50 && mousePoint.y >= 10 && mousePoint.y <= 30) {
@@ -518,6 +524,7 @@ int main(void) {
                         (selectedLevel == 3 && strcmp(respostaUsuario, questoesDificeis[perguntaAtual].resposta) == 0))) {
                         pontos += 10;
                         erro = false;
+                        PlaySound(venceuSound); // Toca o som quando a resposta está correta
                     } else {
                         vidas -= 1;
                         erro = true;
@@ -575,6 +582,7 @@ int main(void) {
     UnloadTexture(nomeBackground);
     UnloadMusicStream(music);
     UnloadSound(clickSound);
+    UnloadSound(venceuSound); // Descarregar o som ao finalizar
     UnloadRenderTexture(rascunhoTarget);
 
     CloseAudioDevice();
@@ -582,3 +590,4 @@ int main(void) {
 
     return 0;
 }
+
