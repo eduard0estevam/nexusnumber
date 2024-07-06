@@ -13,7 +13,8 @@ bool erro = false;
 float tempoErro = 0.0f;
 bool rascunhoAtivo = false;
 bool rascunhoMovendo = false;
-bool aceitandoResposta = true; // Variável para controlar a aceitação de respostas
+bool aceitandoResposta = true;
+bool tempoParado = false; // Variável para controlar a parada do tempo
 Vector2 rascunhoPos = {100, 100};
 Vector2 mouseOffset = {0, 0};
 RenderTexture2D rascunhoTarget;
@@ -128,9 +129,11 @@ void TelaGameOver(Font customFont, Texture2D gameOverImage, int pontos, float te
     DrawTextEx(customFont, "GameOver!", (Vector2){SCREEN_WIDTH / 2 - 378, SCREEN_HEIGHT / 2 - 140}, 60, 2, PINK);
     DrawTextEx(customFont, "Clique na tela para reiniciar.", (Vector2){SCREEN_WIDTH / 2 - 390, SCREEN_HEIGHT / 2 - 60}, 20, 2, PINK);
 
+    int minutos = (int)tempoJogo / 60;
+    int segundos = (int)tempoJogo % 60;
     char strPontos[50], strTempo[50];
     sprintf(strPontos, "Pontuacao final: %d", pontos);
-    sprintf(strTempo, "Tempo de jogo: %.2f", tempoJogo);
+    sprintf(strTempo, "Tempo de jogo: %02d:%02d", minutos, segundos);
     DrawTextEx(customFont, strPontos, (Vector2){SCREEN_WIDTH / 2 - 370, SCREEN_HEIGHT / 2 - 180}, 23, 2, PINK);
     DrawTextEx(customFont, strTempo, (Vector2){SCREEN_WIDTH / 2 - 378, SCREEN_HEIGHT / 2 - 220}, 23, 2, PINK);
 }
@@ -140,9 +143,11 @@ void TelaVitoria(Font customFont, Texture2D vitoriaImage, int pontos, float temp
     DrawTexture(vitoriaImage, (SCREEN_WIDTH - vitoriaImage.width) / 2, (SCREEN_HEIGHT - vitoriaImage.height) / 2, WHITE);
     DrawTextEx(customFont, "Parabens! Você venceu!", (Vector2){SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100}, 40, 2, titleColor);
 
+    int minutos = (int)tempoJogo / 60;
+    int segundos = (int)tempoJogo % 60;
     char strPontos[50], strTempo[50];
     sprintf(strPontos, "Pontuacao final: %d", pontos);
-    sprintf(strTempo, "Tempo de jogo: %.2f segundos", tempoJogo);
+    sprintf(strTempo, "Tempo de jogo: %02d:%02d", minutos, segundos);
     DrawTextEx(customFont, strPontos, (Vector2){SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 + 20}, 30, 2, titleColor);
     DrawTextEx(customFont, strTempo, (Vector2){SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 + 60}, 30, 2, titleColor);
 }
@@ -183,13 +188,13 @@ void TelaRascunho(Font customFont, Color titleColor, Texture2D folhaCaderno) {
 
     // Limpar rascunho quando clicar em um botão específico
     if (CheckCollisionPointRec(GetMousePosition(), (Rectangle){SCREEN_WIDTH - 250, 10, 200, 40}) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        LimparRascunho();  // Chama a função para limpar o rascunho
+        LimparRascunho();
     }
 }
 
 void LimparRascunho() {
     BeginTextureMode(rascunhoTarget);
-    ClearBackground(RAYWHITE);  // Limpa a textura de renderização do rascunho
+    ClearBackground(RAYWHITE);
     EndTextureMode();
 }
 
@@ -278,21 +283,23 @@ int main(void) {
     int perguntaAtual = 0;
     char respostaUsuario[256] = "";
 
-    rascunhoTarget = LoadRenderTexture(800, 600); // Alterar tamanho do rascunho
+    rascunhoTarget = LoadRenderTexture(800, 600);
     BeginTextureMode(rascunhoTarget);
     ClearBackground(RAYWHITE);
     EndTextureMode();
 
     while (!exitGame && !WindowShouldClose()) {
         UpdateMusicStream(music);
-        tempoJogo += GetFrameTime();
+        if (!tempoParado) {
+            tempoJogo += GetFrameTime();
+        }
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
         if (IsKeyPressed(KEY_P)) {
             paused = !paused;
-            aceitandoResposta = false; // Controla aceitação de respostas e nao aceita respostas durante a pausa
+            aceitandoResposta = false;
         }
 
         if (paused) {
@@ -311,6 +318,7 @@ int main(void) {
                 perguntaAtual = 0;
                 respostaUsuario[0] = '\0';
                 tempoJogo = 0.0f;
+                tempoParado = false;
             }
         } else if (vitoria) {
             TelaVitoria(customFont, vitoriaImage, pontos, tempoJogo, titleColor);
@@ -326,6 +334,7 @@ int main(void) {
                 perguntaAtual = 0;
                 respostaUsuario[0] = '\0';
                 tempoJogo = 0.0f;
+                tempoParado = false;
             }
         } else {
             if (!gameStarted) {
@@ -407,7 +416,7 @@ int main(void) {
 
                     if (CheckCollisionPointRec(mousePoint, rascunhoButton)) {
                         rascunhoAtivo = true;
-                        aceitandoResposta = false; // Não aceitar respostas durante o rascunho
+                        aceitandoResposta = false;
                         PlaySound(clickSound);
                     }
 
@@ -428,6 +437,7 @@ int main(void) {
                     perguntaAtual++;
                     respostaUsuario[0] = '\0';
                     if (perguntaAtual >= 10 || vidas <= 0) {
+                        tempoParado = true; // Parar o tempo quando o jogo acaba
                         if (vidas <= 0) {
                             gameOver = true;
                         } else {
@@ -449,7 +459,7 @@ int main(void) {
                 TelaRascunho(customFont, titleColor, folhaCaderno);
                 if (IsKeyPressed(KEY_V)) {
                     rascunhoAtivo = false;
-                    aceitandoResposta = true; // Volta a aceitar respostas
+                    aceitandoResposta = true;
                 }
 
                 if (IsKeyPressed(KEY_C)) {
