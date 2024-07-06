@@ -113,7 +113,7 @@ void EntradaNomeJogador(Font customFont, Color titleColor, Texture2D background)
 void MostrarRanking(Font customFont, Color titleColor, Texture2D background) {
     ClearBackground(RAYWHITE);
     DrawTexture(background, 0, 0, WHITE);
-    DrawTextEx(customFont, "Ranking", (Vector2){SCREEN_WIDTH / 2 - 60, 40}, 40, 2, titleColor);
+    DrawTextEx(customFont, "Ranking", (Vector2){SCREEN_WIDTH / 2 - 90, 40}, 40, 2, titleColor);
 
     FILE *file = fopen("pontuacoes.txt", "r");
     if (file == NULL) {
@@ -129,7 +129,7 @@ void MostrarRanking(Font customFont, Color titleColor, Texture2D background) {
     }
     fclose(file);
 
-    DrawTextEx(customFont, "Pressione ENTER para voltar", (Vector2){SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT - 60}, 20, 2, titleColor);
+    DrawTextEx(customFont, "Pressione ENTER para voltar", (Vector2){SCREEN_WIDTH / 2 - 215, SCREEN_HEIGHT - 60}, 20, 2, titleColor);
     if (IsKeyPressed(KEY_ENTER)) {
         mostrandoRanking = false;
     }
