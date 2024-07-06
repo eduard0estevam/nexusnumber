@@ -21,6 +21,7 @@ bool loading = false;
 bool loadingComplete = false;
 bool paused = false;
 bool gameOver = false;
+bool showingLevelButtons = false; // Variável global adicionada
 char nomeJogador[256] = "";
 Vector2 rascunhoPos = {100, 100};
 Vector2 mouseOffset = {0, 0};
@@ -92,6 +93,9 @@ void EntradaNomeJogador(Font customFont, Color titleColor, Texture2D background)
     DrawRectangle(SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 45, 400, 40, WHITE);
     DrawTextEx(customFont, nomeJogador, (Vector2){SCREEN_WIDTH / 2 - 190, SCREEN_HEIGHT / 2 - 40}, 30, 2, PINK);
 
+    // Adiciona botão "Voltar"
+    DrawTextEx(customFont, "< Voltar", (Vector2){10, 10}, 22, 2, titleColor);
+
     int key = GetCharPressed();
     while (key > 0) {
         if (key >= 32 && key <= 125 && strlen(nomeJogador) < 255) {
@@ -107,6 +111,15 @@ void EntradaNomeJogador(Font customFont, Color titleColor, Texture2D background)
     if (IsKeyPressed(KEY_ENTER) && strlen(nomeJogador) > 0) {
         entrandoNome = false;
         loading = true;
+    }
+
+    // Verifica se o botão "Voltar" foi pressionado
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        Vector2 mousePoint = GetMousePosition();
+        if (mousePoint.x >= 10 && mousePoint.x <= 110 && mousePoint.y >= 10 && mousePoint.y <= 30) {
+            entrandoNome = false;
+            showingLevelButtons = true;
+        }
     }
 }
 
@@ -312,7 +325,6 @@ int main(void) {
 
     bool exitGame = false;
     bool gameStarted = false;
-    bool showingLevelButtons = false;
     int selectedLevel = 0;
     float loadingTimer = 0;
 
