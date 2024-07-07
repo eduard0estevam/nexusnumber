@@ -86,7 +86,7 @@ void Carregando(Font customFont, Texture2D loadingImage, Color titleColor) {
     char loadingText[20];
     snprintf(loadingText, sizeof(loadingText), "Carregando%s", (loadingDots == 1 ? "." : (loadingDots == 2 ? ".." : (loadingDots == 3 ? "..." : ""))));
     
-    DrawTextEx(customFont, loadingText, (Vector2){SCREEN_WIDTH / 2 - 155, SCREEN_HEIGHT / 2 + 200}, 40, 2, titleColor);
+    DrawTextEx(customFont, loadingText, (Vector2){SCREEN_WIDTH / 2 - 155, SCREEN_HEIGHT / 2 + 240}, 40, 2, titleColor);
 }
 
 void MostrarNiveis(Font customFont, Texture2D background, Rectangle easyButton, Rectangle mediumButton, Rectangle hardButton, Color levelButtonColor, Color levelButtonTextColor, Color titleColor) {
@@ -240,11 +240,11 @@ void TelaGameOver(Font customFont, Texture2D gameOverImage, int pontos, float te
     DrawTextEx(customFont, strTempo, (Vector2){SCREEN_WIDTH / 2 - 378, SCREEN_HEIGHT / 2 - 220}, 23, 2, PINK);
 }
 
-void TelaVitoria(Font customFont, Texture2D vitoriaImage, int pontos, float tempoJogo, Color titleColor) {
+void TelaVitoria(Font customFont, Texture2D vitoriaImage, int pontos, float tempoJogo, Color titleColor, Sound musicavitoria) {
     ClearBackground(BLACK);
     DrawTexture(vitoriaImage, (SCREEN_WIDTH - vitoriaImage.width) / 2, (SCREEN_HEIGHT - vitoriaImage.height) / 2, WHITE);
     DrawTextEx(customFont, "Parabens! Voce venceu!", (Vector2){SCREEN_WIDTH / 2 - 135, SCREEN_HEIGHT / 2 - 50}, 30, 2, PINK);
-    DrawTextEx(customFont, "clique na tela para continuar", (Vector2){SCREEN_WIDTH / 2 - 120, SCREEN_HEIGHT / 2 + 160}, 20, 2, PINK);
+    DrawTextEx(customFont, "Clique na tela para continuar", (Vector2){SCREEN_WIDTH / 2 - 120, SCREEN_HEIGHT / 2 + 160}, 20, 2, PINK);
 
     int minutos = (int)tempoJogo / 60;
     int segundos = (int)tempoJogo % 60;
@@ -253,6 +253,8 @@ void TelaVitoria(Font customFont, Texture2D vitoriaImage, int pontos, float temp
     sprintf(strTempo, "Tempo de jogo: %02d:%02d", minutos, segundos);
     DrawTextEx(customFont, strPontos, (Vector2){SCREEN_WIDTH / 2 - 135, SCREEN_HEIGHT / 2 + 8}, 30, 2, PINK);
     DrawTextEx(customFont, strTempo, (Vector2){SCREEN_WIDTH / 2 - 135, SCREEN_HEIGHT / 2 + 60}, 30, 2, PINK);
+
+    PlaySound(musicavitoria);
 }
 
 void MostrarMensagemErro(Font customFont, Questao questoes[], int perguntaAtual, int selectedLevel, Color textColor) {
@@ -321,8 +323,10 @@ int main(void) {
     PlayMusicStream(music);
     Sound clickSound = LoadSound("./audio/click.wav");
     Sound venceuSound = LoadSound("./audio/acerto.wav");
+    Sound musicavitoria = LoadSound("./audio/musicavitoria.ogg");
     SetSoundVolume(clickSound, 0.5f);
     SetSoundVolume(venceuSound, 0.5f);
+    SetSoundVolume(musicavitoria, 0.5f);
 
     Color textColor = WHITE;
     Color enterButtonColor = PINK;
@@ -427,7 +431,7 @@ int main(void) {
                 tempoParado = false;
             }
         } else if (vitoria) {
-            TelaVitoria(customFont, vitoriaImage, pontos, tempoJogo, titleColor);
+            TelaVitoria(customFont, vitoriaImage, pontos, tempoJogo, titleColor, musicavitoria);
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                 gameStarted = false;
                 showingLevelButtons = false;
@@ -598,7 +602,8 @@ int main(void) {
     UnloadTexture(nomeBackground);
     UnloadMusicStream(music);
     UnloadSound(clickSound);
-    UnloadSound(venceuSound); // Descarregar o som ao finalizar
+    UnloadSound(venceuSound);
+    UnloadSound(musicavitoria); // Descarregar o som ao finalizar
     UnloadRenderTexture(rascunhoTarget);
 
     CloseAudioDevice();
