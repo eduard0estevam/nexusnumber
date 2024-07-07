@@ -334,7 +334,7 @@ int main(void) {
     Texture2D easyBackground = LoadTexture("./imagens/facill.png");
     Texture2D loadingImage = LoadTexture("./imagens/carregamento11.png");
     Texture2D mediumBackground = LoadTexture("./imagens/medio.png");
-    Texture2D hardBackground = LoadTexture("./imagens/difficil.png");
+    Texture2D hardBackground = LoadTexture("./imagens/hard111.png");
     Texture2D pauseImage = LoadTexture("./imagens/pause.png");
     Texture2D gameOverImage = LoadTexture("./imagens/gameover.png");
     Texture2D vitoriaImage = LoadTexture("./imagens/vvenceuu.png");
