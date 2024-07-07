@@ -228,7 +228,7 @@ void TelaVitoria(Font customFont, Texture2D vitoriaImage, int pontos, float temp
     ClearBackground(BLACK);
     DrawTexture(vitoriaImage, (SCREEN_WIDTH - vitoriaImage.width) / 2, (SCREEN_HEIGHT - vitoriaImage.height) / 2, WHITE);
     DrawTextEx(customFont, "Parabens! Voce venceu!", (Vector2){SCREEN_WIDTH / 2 - 135, SCREEN_HEIGHT / 2 - 50}, 30, 2, PINK);
-    DrawTextEx(customFont, "clique na tela para continuar", (Vector2){SCREEN_WIDTH / 2 - 135, SCREEN_HEIGHT / 2 + 160}, 20, 2, PINK);
+    DrawTextEx(customFont, "clique na tela para continuar", (Vector2){SCREEN_WIDTH / 2 - 120, SCREEN_HEIGHT / 2 + 160}, 20, 2, PINK);
 
     int minutos = (int)tempoJogo / 60;
     int segundos = (int)tempoJogo % 60;
@@ -290,7 +290,7 @@ int main(void) {
 
     Texture2D background = LoadTexture("./imagens/menu.png");
     Texture2D easyBackground = LoadTexture("./imagens/facill.png");
-    Texture2D loadingImage = LoadTexture("./imagens/carregamento.png");
+    Texture2D loadingImage = LoadTexture("./imagens/carregamento11.png");
     Texture2D mediumBackground = LoadTexture("./imagens/medio.png");
     Texture2D hardBackground = LoadTexture("./imagens/difficil.png");
     Texture2D pauseImage = LoadTexture("./imagens/pause.png");
