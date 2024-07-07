@@ -27,6 +27,10 @@ Vector2 rascunhoPos = {100, 100};
 Vector2 mouseOffset = {0, 0};
 RenderTexture2D rascunhoTarget;
 
+// Variáveis para animação de carregamento
+float loadingTimer = 0.0f;
+int loadingDots = 0;
+
 void LimparRascunho();
 
 // Estrutura para armazenar perguntas e respostas
@@ -70,7 +74,19 @@ void MenuPrincipal(Font customFont, Texture2D background, Rectangle enterButton,
 void Carregando(Font customFont, Texture2D loadingImage, Color titleColor) {
     ClearBackground(BLACK);
     DrawTexture(loadingImage, (SCREEN_WIDTH - loadingImage.width) / 2, (SCREEN_HEIGHT - loadingImage.height) / 2, WHITE);
-    DrawTextEx(customFont, "Carregando...", (Vector2){SCREEN_WIDTH / 2 - 155, SCREEN_HEIGHT / 2 + 240}, 40, 2, titleColor);
+    
+    // Atualizar pontos de carregamento
+    if (loadingTimer >= 0.5f) {
+        loadingDots = (loadingDots + 1) % 4; // Atualiza entre 0 e 3 pontos
+        loadingTimer = 0.0f;
+    }
+    loadingTimer += GetFrameTime();
+
+    // Construir string de carregamento com pontos
+    char loadingText[20];
+    snprintf(loadingText, sizeof(loadingText), "Carregando%s", (loadingDots == 1 ? "." : (loadingDots == 2 ? ".." : (loadingDots == 3 ? "..." : ""))));
+    
+    DrawTextEx(customFont, loadingText, (Vector2){SCREEN_WIDTH / 2 - 155, SCREEN_HEIGHT / 2 + 200}, 40, 2, titleColor);
 }
 
 void MostrarNiveis(Font customFont, Texture2D background, Rectangle easyButton, Rectangle mediumButton, Rectangle hardButton, Color levelButtonColor, Color levelButtonTextColor, Color titleColor) {
@@ -288,7 +304,7 @@ int main(void) {
     Font customFont = LoadFont("04B_30__.TTF");
     Font chalkboyFont = LoadFontEx("Neat Chalk.ttf", 30, NULL, 0);
 
-    Texture2D background = LoadTexture("./imagens/menu.png");
+    Texture2D background = LoadTexture("./imagens/menu111.png");
     Texture2D easyBackground = LoadTexture("./imagens/facill.png");
     Texture2D loadingImage = LoadTexture("./imagens/carregamento11.png");
     Texture2D mediumBackground = LoadTexture("./imagens/medio.png");
@@ -298,7 +314,7 @@ int main(void) {
     Texture2D vitoriaImage = LoadTexture("./imagens/vvenceuu.png");
     Texture2D folhaCaderno = LoadTexture("./imagens/rascunhoo.png");
     Texture2D rankingBackground = LoadTexture("./imagens/ranking11.png");
-    Texture2D nomeBackground = LoadTexture("./imagens/nome11.png");
+    Texture2D nomeBackground = LoadTexture("./imagens/nome111.png");
 
     Music music = LoadMusicStream("./audio/musica.ogg");
     SetMusicVolume(music, 0.5f);
@@ -590,4 +606,3 @@ int main(void) {
 
     return 0;
 }
-
