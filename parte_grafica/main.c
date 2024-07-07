@@ -1,30 +1,31 @@
-#include <stdlib.h>
-#include <time.h>
-#include <stdio.h>
+#include <stdlib.h> 
+#include <time.h> //biblioteca de tempo para manipulação do tempo de jogo
+#include <stdio.h> //biblioteca padrão de C 
 #include <string.h>
 #include "raylib.h"
 
 // Variáveis globais
 int vidas = 3;
-int pontos = 0;
+int pontos = 0; 
 float tempoJogo = 0.0f;
 bool vitoria = false;
 bool erro = false;
-float tempoErro = 0.0f;
-bool rascunhoAtivo = false;
-bool rascunhoMovendo = false;
-bool aceitandoResposta = true;
-bool tempoParado = false;
-bool mostrandoRanking = false;
-bool entrandoNome = false;
-bool loading = false;
-bool loadingComplete = false;
-bool paused = false;
-bool gameOver = false;
-bool showingLevelButtons = false; // Variável global adicionada
-bool musicaVitoriaTocando = false; // Variável para controlar a música de vitória
+float tempoErro = 0.0f; //temporizador para "resposta errada" aparecer na tela por 2 segundos
+float tempoAcerto = 0.0f; //temporizador para "reposta certa" aparecer na tela por 2 segundos
+bool rascunhoAtivo = false; //renderização para o rascunho que simula uma folha de rascunho de cálculos 
+bool rascunhoMovendo = false; //faz o rascunho se mover verificando a posição do clique do mouse na tela 
+bool aceitandoResposta = true; //Indica se o jogo está aceitando uma resposta do jogador, essa variavel booleana ajuda a comandos do telcado nao serem confudidos com a resposta dada pelo usuario, ou os comandos do rascunho
+bool tempoParado = false; //  Indica se o tempo está parado, nesse caso, o tempo parado será indicado quando o jogador terminar a fase em GameOver ou em Vitória
+bool mostrandoRanking = false; //mostra o ranking na logica do jogo caso o jogador clique em "ranking"
+bool entrandoNome = false; //verifica a entrada do nome do jogador após clicar no menu das dificuldades
+bool loading = false; //faz com que o carregamento seja verdadeiro depois que o usuario inserir seu nome
+bool loadingComplete = false; //se o carregamento estiver completo, o jogo começa
+bool paused = false; //verifica se o jogo está pausado, caso contrário, as outras funções do jogo sao executadas
+bool gameOver = false; //faz com que gameover se torne verdadeiro caso o jogador perca todas as vidas
+bool showingLevelButtons = false; // Variável global p/ verificar se os botoes estao sendo mostrados ou nao dentro do loop do jogo
+bool musicaVitoriaTocando = false; // Variável para controlar a música de vitória (faz com que a musica de vitoria toque somente na tela de vitoria)
 bool respostaCerta = false; // Variável para controlar a mensagem de resposta certa
-char nomeJogador[256] = "";
+char nomeJogador[256] = ""; //armazena o nome do jogador numa string
 Vector2 rascunhoPos = {100, 100};
 Vector2 mouseOffset = {0, 0};
 RenderTexture2D rascunhoTarget;
@@ -33,7 +34,7 @@ RenderTexture2D rascunhoTarget;
 float loadingTimer = 0.0f;
 int loadingDots = 0;
 
-void LimparRascunho();
+void LimparRascunho(); 
 
 // Estrutura para armazenar perguntas e respostas
 typedef struct {
@@ -114,14 +115,15 @@ void EntradaNomeJogador(Font customFont, Color titleColor, Texture2D background,
     // Adiciona botão "Voltar"
     DrawTextEx(customFont, "< Voltar", (Vector2){10, 10}, 22, 2, titleColor);
 
+// Verifica se o botão de Enter foi pressionado
     int key = GetCharPressed();
     while (key > 0) {
         if (key >= 32 && key <= 125 && strlen(nomeJogador) < 255) {
             int len = strlen(nomeJogador);
             nomeJogador[len] = (char)key;
-            nomeJogador[len + 1] = '\0';
+            nomeJogador[len + 1] = '\0'; // adiciona o caractere nulo ao final da string
         }
-        key = GetCharPressed();
+        key = GetCharPressed(); // Verifica o próximo caractere pressionado
     }
     if (IsKeyPressed(KEY_BACKSPACE) && strlen(nomeJogador) > 0) {
         nomeJogador[strlen(nomeJogador) - 1] = '\0';
@@ -135,8 +137,8 @@ void EntradaNomeJogador(Font customFont, Color titleColor, Texture2D background,
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         Vector2 mousePoint = GetMousePosition();
         if (mousePoint.x >= 10 && mousePoint.x <= 110 && mousePoint.y >= 10 && mousePoint.y <= 30) {
-            entrandoNome = false;
-            showingLevelButtons = true;
+            entrandoNome = false; // fecha o menu de entrada de nome
+            showingLevelButtons = true; // mostra os botoes de niveis
             PlaySound(clickSound);
         }
     }
@@ -147,17 +149,17 @@ void MostrarRanking(Font customFont, Color titleColor, Texture2D background) {
     DrawTexture(background, 0, 0, WHITE);
     DrawTextEx(customFont, "Ranking", (Vector2){SCREEN_WIDTH / 2 - 90, 40}, 40, 2, titleColor);
 
-    FILE *file = fopen("pontuacoes.txt", "r");
+    FILE *file = fopen("pontuacoes.txt", "r"); // abre o arquivo para leitura
     if (file == NULL) {
         DrawTextEx(customFont, "Nenhum ranking disponível.", (Vector2){SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2}, 30, 2, titleColor);
         return;
     }
 
     char linha[256];
-    int y = 100;
+    int y = 100; // posicao do texto em y
     while (fgets(linha, sizeof(linha), file)) {
         DrawTextEx(customFont, linha, (Vector2){50, y}, 20, 2, titleColor);
-        y += 30;
+        y += 30; // incrementa a posicao do texto em y (verticalmente)
     }
     fclose(file);
 
@@ -167,8 +169,8 @@ void MostrarRanking(Font customFont, Color titleColor, Texture2D background) {
     }
 }
 
-void SalvarPontuacao(char *nome, int pontuacao) {
-    FILE *file = fopen("pontuacoes.txt", "a");
+void SalvarPontuacao(char *nome, int pontuacao) { // Função para salvar as pontuações
+    FILE *file = fopen("pontuacoes.txt", "a"); // abre o arquivo para escrita
     if (file != NULL) {
         fprintf(file, "%s - %d\n", nome, pontuacao);
         fclose(file);
@@ -186,17 +188,13 @@ void MostrarPergunta(Font customFont, Font chalkboyFont, Texture2D background, Q
     DrawTextEx(customFont, "Rascunho", (Vector2){rascunhoButton.x + 5, rascunhoButton.y + 10}, 22, 2, buttonTextColor);
 
     char pergunta[256];
-    strcpy(pergunta, questoes[perguntaAtual].pergunta);
-    char *linha = strtok(pergunta, "\n");
-    int y = 150;
+    strcpy(pergunta, questoes[perguntaAtual].pergunta); // copia a pergunta atual para a variável
+    char *linha = strtok(pergunta, "\n"); // divide a pergunta em linhas
+    int y = 150; //
     while (linha != NULL) {
-        DrawTextEx(chalkboyFont, linha, (Vector2){125, y}, 27, 2, textColor);
+        DrawTextEx(chalkboyFont, linha, (Vector2){125, y}, 27, 2, textColor); // desenha cada linha (pois o DrawTextEx nao permite quebra de linha)
         y += 30;
         linha = strtok(NULL, "\n");
-    }
-
-    if (respostaCerta) {
-        DrawTextEx(chalkboyFont, "Resposta certa!", (Vector2){380, 270}, 27, 2, GREEN);
     }
 
     DrawTextEx(chalkboyFont, "Sua resposta:", (Vector2){380, 300}, 27, 2, textColor);
@@ -207,6 +205,8 @@ void MostrarPergunta(Font customFont, Font chalkboyFont, Texture2D background, Q
     sprintf(strVidas, "Vidas: %d", vidas);
     DrawTextEx(chalkboyFont, strPontos, (Vector2){380, SCREEN_HEIGHT - 306}, 22, 2, textColor);
     DrawTextEx(chalkboyFont, strVidas, (Vector2){380, SCREEN_HEIGHT - 270}, 22, 2, textColor);
+
+// Verifica se a reposta esta sendo aceita devidamente 
 
     if (aceitandoResposta) {
         int key = GetCharPressed();
@@ -223,6 +223,7 @@ void MostrarPergunta(Font customFont, Font chalkboyFont, Texture2D background, Q
         }
     }
 }
+// Função para mostrar o menu de pausa
 
 void MenuPausa(Font customFont, Texture2D pauseImage, Color titleColor) {
     ClearBackground(BLACK);
@@ -230,6 +231,8 @@ void MenuPausa(Font customFont, Texture2D pauseImage, Color titleColor) {
     DrawTextEx(customFont, "Jogo Pausado", (Vector2){SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 20}, 40, 2, titleColor);
     DrawTextEx(customFont, "Pressione P para continuar", (Vector2){SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 + 20}, 20, 2, titleColor);
 }
+
+// Função para mostrar a tela de game over
 
 void TelaGameOver(Font customFont, Texture2D gameOverImage, int pontos, float tempoJogo, Color titleColor) {
     ClearBackground(BLACK);
@@ -246,6 +249,8 @@ void TelaGameOver(Font customFont, Texture2D gameOverImage, int pontos, float te
     DrawTextEx(customFont, strTempo, (Vector2){SCREEN_WIDTH / 2 - 378, SCREEN_HEIGHT / 2 - 220}, 23, 2, PINK);
 }
 
+// Função para mostrar a tela de vitoria
+
 void TelaVitoria(Font customFont, Texture2D vitoriaImage, int pontos, float tempoJogo, Color titleColor, Sound musicavitoria, Music *music) {
     ClearBackground(BLACK);
     DrawTexture(vitoriaImage, (SCREEN_WIDTH - vitoriaImage.width) / 2, (SCREEN_HEIGHT - vitoriaImage.height) / 2, WHITE);
@@ -261,57 +266,66 @@ void TelaVitoria(Font customFont, Texture2D vitoriaImage, int pontos, float temp
     DrawTextEx(customFont, strTempo, (Vector2){SCREEN_WIDTH / 2 - 135, SCREEN_HEIGHT / 2 + 60}, 30, 2, PINK);
 
     if (!musicaVitoriaTocando) {
-        StopMusicStream(*music);
-        PlaySound(musicavitoria);
-        musicaVitoriaTocando = true;
+        StopMusicStream(*music); // para a música
+        PlaySound(musicavitoria); // toca a música de vitória
+        musicaVitoriaTocando = true; // marca que a música de vitória foi tocada
     }
 }
 
-void MostrarMensagemErro(Font customFont, Questao questoes[], int perguntaAtual, int selectedLevel, Color textColor) {
-    DrawTextEx(customFont, "Errado! A resposta era:", (Vector2){390, 265}, 23, 2, PINK);
-    DrawTextEx(customFont, questoes[perguntaAtual].resposta, (Vector2){620, 299}, 27, 2, PINK);
+// Funçao para mostrar as mensagens de erro 
+
+void MostrarMensagemErro(Font chalkboyFont, Questao questoes[], int perguntaAtual, int selectedLevel, Color textColor) {
+    DrawTextEx(chalkboyFont, "Errado! A resposta era:", (Vector2){390, 265}, 23, 2, PINK);
+    DrawTextEx(chalkboyFont, questoes[perguntaAtual].resposta, (Vector2){620, 299}, 27, 2, PINK);
 }
 
+//funcao para mostrar a mensagem de acerto
+
+void MostrarMensagemAcerto(Font chalkboyFont, Questao questoes[], int perguntaAtual, Color titleColor) {
+    DrawTextEx(chalkboyFont, "Resposta certa!", (Vector2){380, 270}, 27, 2, titleColor);
+}
+
+// Função para mostrar o rascunho
 void TelaRascunho(Font customFont, Color titleColor, Texture2D folhaCaderno) {
     DrawTexture(folhaCaderno, rascunhoPos.x, rascunhoPos.y, WHITE);
 
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-        Vector2 mousePos = GetMousePosition();
-        if (CheckCollisionPointRec(mousePos, (Rectangle){rascunhoPos.x, rascunhoPos.y, 800, 600})) {
-            BeginTextureMode(rascunhoTarget);
-            DrawCircleV((Vector2){mousePos.x - rascunhoPos.x, mousePos.y - rascunhoPos.y}, 5, BLACK);
-            EndTextureMode();
+        Vector2 mousePos = GetMousePosition(); // Obtem a posição do mouse
+        if (CheckCollisionPointRec(mousePos, (Rectangle){rascunhoPos.x, rascunhoPos.y, 800, 600})) { // Verifica se o mouse está sobre o rascunho
+            BeginTextureMode(rascunhoTarget); // Inicia o modo de renderização do rascunho
+            DrawCircleV((Vector2){mousePos.x - rascunhoPos.x, mousePos.y - rascunhoPos.y}, 5, BLACK); // Desenha o rascunho
+            EndTextureMode(); // Encerra o modo de renderização do rascunho
         }
     }
 
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), (Rectangle){rascunhoPos.x, rascunhoPos.y, 800, 30})) {
-        rascunhoMovendo = true;
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), (Rectangle){rascunhoPos.x, rascunhoPos.y, 800, 30})) { //
+        rascunhoMovendo = true; // Ativa o movimento do rascunho
         mouseOffset = (Vector2){GetMousePosition().x - rascunhoPos.x, GetMousePosition().y - rascunhoPos.y};
     }
 
-    if (rascunhoMovendo) {
+    if (rascunhoMovendo) { 
         rascunhoPos = (Vector2){GetMousePosition().x - mouseOffset.x, GetMousePosition().y - mouseOffset.y};
-        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-            rascunhoMovendo = false;
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) { // Verifica se o botão do mouse foi solto
+            rascunhoMovendo = false; // Desativa o movimento do rascunho
         }
     }
 
     DrawTextureRec(rascunhoTarget.texture, (Rectangle){0, 0, rascunhoTarget.texture.width, -rascunhoTarget.texture.height}, rascunhoPos, WHITE);
 
-    if (CheckCollisionPointRec(GetMousePosition(), (Rectangle){SCREEN_WIDTH - 250, 10, 200, 40}) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+    if (CheckCollisionPointRec(GetMousePosition(), (Rectangle){SCREEN_WIDTH - 250, 10, 200, 40}) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) { // Verifica se o botão de voltar foi pressionado (TECLA V)
         LimparRascunho();
     }
 }
 
-void LimparRascunho() {
+void LimparRascunho() { // Função para limpar o rascunho
     BeginTextureMode(rascunhoTarget);
     ClearBackground(RAYWHITE);
     EndTextureMode();
 }
 
 int main(void) {
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "NexusNumber");
-    InitAudioDevice();
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "NexusNumber"); // Inicializa a janela de exibição
+    InitAudioDevice(); // Inicializa o dispositivo de ações
 
     Font customFont = LoadFont("04B_30__.TTF");
     Font chalkboyFont = LoadFontEx("Neat Chalk.ttf", 30, NULL, 0);
@@ -391,8 +405,8 @@ int main(void) {
         {"5- Se a=1, b=2, c=3, ..., z=26, qual eh a soma\n das letras da palavra CAT?", "24"},
     };
 
-    srand(time(NULL));
-    embaralhar(questoesFaceis, 10);
+    srand(time(NULL)); // Inicializa o gerador de números aleatórios
+    embaralhar(questoesFaceis, 10); // Embaralha as questões
     embaralhar(questoesMedias, 5);
     embaralhar(questoesDificeis, 5);
 
@@ -404,10 +418,21 @@ int main(void) {
     ClearBackground(RAYWHITE);
     EndTextureMode();
 
+// Loop principal
+
     while (!exitGame && !WindowShouldClose()) {
         UpdateMusicStream(music);
         if (!tempoParado) {
-            tempoJogo += GetFrameTime();
+            tempoJogo += GetFrameTime(); // Atualização do tempo de jogo para exibição na tela de vitoria e game over
+        }
+
+        // Atualização dos tempos de exibição de erro e acerto
+
+        if (tempoErro > 0.0f) {
+            tempoErro -= GetFrameTime();
+        }
+        if (tempoAcerto > 0.0f) {
+            tempoAcerto -= GetFrameTime();
         }
 
         BeginDrawing();
@@ -419,14 +444,18 @@ int main(void) {
         }
 
         if (paused) {
-            MenuPausa(customFont, pauseImage, titleColor);
-        } else if (mostrandoRanking) {
+            MenuPausa(customFont, pauseImage, titleColor); // Chama a função de menu de pausa
+        } else if (mostrandoRanking) { //se nao estiver pausado, mostrar o ranking
             MostrarRanking(customFont, titleColor, rankingBackground);
-        } else if (entrandoNome) {
+        } else if (entrandoNome) { // se nao estiver pausado, mostrar o nome do jogador
             EntradaNomeJogador(customFont, titleColor, nomeBackground, clickSound);
-        } else if (gameOver) {
+        } else if (gameOver) { // se nao estiver pausado, mostrar o game over
             TelaGameOver(customFont, gameOverImage, pontos, tempoJogo, titleColor);
+
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+
+                // Reinicia o jogo quando perde
+
                 gameStarted = false;
                 showingLevelButtons = false;
                 loading = false;
@@ -442,8 +471,12 @@ int main(void) {
                 respostaCerta = false; // Resetar a mensagem de resposta certa
             }
         } else if (vitoria) {
+
             TelaVitoria(customFont, vitoriaImage, pontos, tempoJogo, titleColor, musicavitoria, &music);
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+
+                // Reinicia o jogo quando ganha
+
                 gameStarted = false;
                 showingLevelButtons = false;
                 loading = false;
@@ -460,9 +493,11 @@ int main(void) {
                 StopSound(musicavitoria); // Parar a música quando sair da tela de vitória
                 PlayMusicStream(music); // Retomar a música principal
                 respostaCerta = false; // Resetar a mensagem de resposta certa
+
             }
         } else {
-            if (!gameStarted) {
+            if (!gameStarted) { //se o jogo não começou, mostrar o menu principal
+
                 MenuPrincipal(customFont, background, enterButton, exitButton, rankingButton, enterButtonColor, enterButtonTextColor, exitButtonColor, exitButtonTextColor, rankingButtonColor, rankingButtonTextColor, titleColor);
                 if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                     Vector2 mousePoint = GetMousePosition();
@@ -478,13 +513,13 @@ int main(void) {
                         PlaySound(clickSound);
                     }
                 }
-            } else if (showingLevelButtons) {
+            } else if (showingLevelButtons) { //se o jogo comecou (saiu do menu principal), mostrar os botoes de niveis
                 MostrarNiveis(customFont, background, easyButton, mediumButton, hardButton, levelButtonColor, levelButtonTextColor, titleColor);
                 if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                     Vector2 mousePoint = GetMousePosition();
                     if (CheckCollisionPointRec(mousePoint, easyButton)) {
                         selectedLevel = 1;
-                        entrandoNome = true;
+                        entrandoNome = true; // Quando o botão de Easy for pressionado, o jogo vai para a tela de entrada de nome, e assim tambem com os outros niveis
                         showingLevelButtons = false;
                         PlaySound(clickSound);
                     } else if (CheckCollisionPointRec(mousePoint, mediumButton)) {
@@ -503,7 +538,7 @@ int main(void) {
                         PlaySound(clickSound);
                     }
                 }
-            } else if (loading) {
+            } else if (loading) { // se o jogo comecou (saiu do menu principal), mostrar a imagem de carregamento
                 Carregando(customFont, loadingImage, titleColor);
                 loadingTimer += GetFrameTime();
                 if (loadingTimer >= 3.0f) {
@@ -511,7 +546,7 @@ int main(void) {
                     loading = false;
                     loadingTimer = 0;
                 }
-            } else if (loadingComplete) {
+            } else if (loadingComplete) { // se o carregamento terminou, mostrar as perguntas (dos respectivos niveis)
                 if (selectedLevel == 1) {
                     MostrarPergunta(customFont, chalkboyFont, easyBackground, questoesFaceis, perguntaAtual, respostaUsuario, pontos, vidas, textColor, titleColor, rascunhoButton, enterButtonColor, enterButtonTextColor);
                 } else if (selectedLevel == 2) {
@@ -520,21 +555,22 @@ int main(void) {
                     MostrarPergunta(customFont, chalkboyFont, hardBackground, questoesDificeis, perguntaAtual, respostaUsuario, pontos, vidas, textColor, titleColor, rascunhoButton, enterButtonColor, enterButtonTextColor);
                 }
 
-                if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                    Vector2 mousePoint = GetMousePosition();
+                if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) { 
+                    Vector2 mousePoint = GetMousePosition(); 
                     if (mousePoint.x >= 10 && mousePoint.x <= 110 && mousePoint.y >= 10 && mousePoint.y <= 30) {
-                        showingLevelButtons = true;
+                        showingLevelButtons = true; // Quando o botão de voltar for pressionado, o jogo volta para o menu de niveis
                         loadingComplete = false;
                         respostaUsuario[0] = '\0';
                         PlaySound(clickSound);
-                       
                     }
 
-                    if (mousePoint.x >= SCREEN_WIDTH - 150 && mousePoint.x <= SCREEN_WIDTH - 50 && mousePoint.y >= 10 && mousePoint.y <= 30) {
+                
+                    if (mousePoint.x >= SCREEN_WIDTH - 150 && mousePoint.x <= SCREEN_WIDTH - 50 && mousePoint.y >= 10 && mousePoint.y <= 30) { 
+                        //no menu de niveis o jogador vai escolher o nivel e vai para o jogo com as questões correspondentes
                         vidas = 3;
                         perguntaAtual = 0;
                         respostaUsuario[0] = '\0';
-                        if (selectedLevel == 1) {
+                        if (selectedLevel == 1) { 
                             embaralhar(questoesFaceis, 10);
                         } else if (selectedLevel == 2) {
                             embaralhar(questoesMedias, 5);
@@ -545,11 +581,10 @@ int main(void) {
                     }
 
                     if (CheckCollisionPointRec(mousePoint, rascunhoButton)) {
-                        rascunhoAtivo = true;
+                        rascunhoAtivo = true; // Quando o botão de Rascunho for pressionado, o rascunho apareçe na tela
                         aceitandoResposta = false;
                         PlaySound(clickSound);
                     }
-
                 }
 
                 if (IsKeyPressed(KEY_ENTER)) {
@@ -560,15 +595,16 @@ int main(void) {
                         pontos += 10;
                         erro = false;
                         respostaCerta = true; // Definir a mensagem de resposta certa
+                        tempoAcerto = 2.0f; // Definir o tempo de exibição
                         PlaySound(venceuSound); // Toca o som quando a resposta está correta
                     } else {
                         vidas -= 1;
                         erro = true;
                         respostaCerta = false; // Limpar a mensagem de resposta certa em caso de erro
-                        tempoErro = 0.0f;
+                        tempoErro = 2.0f; // Definir o tempo de exibição
                     }
-                    perguntaAtual++;
-                    respostaUsuario[0] = '\0';
+                    perguntaAtual++; // Avançar para a proxima pergunta
+                    respostaUsuario[0] = '\0'; 
                     if (perguntaAtual >= 10 || vidas <= 0) {
                         tempoParado = true;
                         SalvarPontuacao(nomeJogador, pontos);
@@ -580,23 +616,29 @@ int main(void) {
                     }
                 }
 
-                if (erro) {
-                    tempoErro += GetFrameTime();
-                    MostrarMensagemErro(customFont, questoesFaceis, perguntaAtual - 1, selectedLevel, RED);
-                    if (tempoErro >= 3.0f) {
-                        erro = false;
-                    }
+                if (erro && tempoErro > 0.0f) {
+                    MostrarMensagemErro(chalkboyFont, questoesFaceis, perguntaAtual - 1, selectedLevel, RED);
+                } else if (respostaCerta && tempoAcerto > 0.0f) {
+                    MostrarMensagemAcerto(chalkboyFont, questoesFaceis, perguntaAtual - 1, GREEN);
                 }
             }
 
+            // verifica se o rascunho estiver ativo
             if (rascunhoAtivo) {
+                // desenha
                 TelaRascunho(customFont, titleColor, folhaCaderno);
+
+                // v para voltar
+
                 if (IsKeyPressed(KEY_V)) {
+                    // volta para a tela do nivel, desativa o rascunho e faz com que "v" nao seja lido como resposta
                     rascunhoAtivo = false;
                     aceitandoResposta = true;
                 }
 
+                // se for c limpa (clean)
                 if (IsKeyPressed(KEY_C)) {
+                    
                     LimparRascunho();
                 }
             }
