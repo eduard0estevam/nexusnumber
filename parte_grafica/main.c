@@ -22,6 +22,8 @@ bool loadingComplete = false;
 bool paused = false;
 bool gameOver = false;
 bool showingLevelButtons = false; // Variável global adicionada
+bool musicaVitoriaTocando = false; // Variável para controlar a música de vitória
+bool respostaCerta = false; // Variável para controlar a mensagem de resposta certa
 char nomeJogador[256] = "";
 Vector2 rascunhoPos = {100, 100};
 Vector2 mouseOffset = {0, 0};
@@ -86,7 +88,7 @@ void Carregando(Font customFont, Texture2D loadingImage, Color titleColor) {
     char loadingText[20];
     snprintf(loadingText, sizeof(loadingText), "Carregando%s", (loadingDots == 1 ? "." : (loadingDots == 2 ? ".." : (loadingDots == 3 ? "..." : ""))));
     
-    DrawTextEx(customFont, loadingText, (Vector2){SCREEN_WIDTH / 2 - 155, SCREEN_HEIGHT / 2 + 240}, 40, 2, titleColor);
+    DrawTextEx(customFont, loadingText, (Vector2){SCREEN_WIDTH / 2 - 155, SCREEN_HEIGHT / 2 + 200}, 40, 2, titleColor);
 }
 
 void MostrarNiveis(Font customFont, Texture2D background, Rectangle easyButton, Rectangle mediumButton, Rectangle hardButton, Color levelButtonColor, Color levelButtonTextColor, Color titleColor) {
@@ -193,6 +195,10 @@ void MostrarPergunta(Font customFont, Font chalkboyFont, Texture2D background, Q
         linha = strtok(NULL, "\n");
     }
 
+    if (respostaCerta) {
+        DrawTextEx(chalkboyFont, "Resposta certa!", (Vector2){380, 270}, 27, 2, GREEN);
+    }
+
     DrawTextEx(chalkboyFont, "Sua resposta:", (Vector2){380, 300}, 27, 2, textColor);
     DrawTextEx(chalkboyFont, respostaUsuario, (Vector2){600, 300}, 27, 2, textColor);
 
@@ -240,7 +246,7 @@ void TelaGameOver(Font customFont, Texture2D gameOverImage, int pontos, float te
     DrawTextEx(customFont, strTempo, (Vector2){SCREEN_WIDTH / 2 - 378, SCREEN_HEIGHT / 2 - 220}, 23, 2, PINK);
 }
 
-void TelaVitoria(Font customFont, Texture2D vitoriaImage, int pontos, float tempoJogo, Color titleColor, Sound musicavitoria) {
+void TelaVitoria(Font customFont, Texture2D vitoriaImage, int pontos, float tempoJogo, Color titleColor, Sound musicavitoria, Music *music) {
     ClearBackground(BLACK);
     DrawTexture(vitoriaImage, (SCREEN_WIDTH - vitoriaImage.width) / 2, (SCREEN_HEIGHT - vitoriaImage.height) / 2, WHITE);
     DrawTextEx(customFont, "Parabens! Voce venceu!", (Vector2){SCREEN_WIDTH / 2 - 135, SCREEN_HEIGHT / 2 - 50}, 30, 2, PINK);
@@ -254,7 +260,11 @@ void TelaVitoria(Font customFont, Texture2D vitoriaImage, int pontos, float temp
     DrawTextEx(customFont, strPontos, (Vector2){SCREEN_WIDTH / 2 - 135, SCREEN_HEIGHT / 2 + 8}, 30, 2, PINK);
     DrawTextEx(customFont, strTempo, (Vector2){SCREEN_WIDTH / 2 - 135, SCREEN_HEIGHT / 2 + 60}, 30, 2, PINK);
 
-    PlaySound(musicavitoria);
+    if (!musicaVitoriaTocando) {
+        StopMusicStream(*music);
+        PlaySound(musicavitoria);
+        musicaVitoriaTocando = true;
+    }
 }
 
 void MostrarMensagemErro(Font customFont, Questao questoes[], int perguntaAtual, int selectedLevel, Color textColor) {
@@ -429,9 +439,10 @@ int main(void) {
                 respostaUsuario[0] = '\0';
                 tempoJogo = 0.0f;
                 tempoParado = false;
+                respostaCerta = false; // Resetar a mensagem de resposta certa
             }
         } else if (vitoria) {
-            TelaVitoria(customFont, vitoriaImage, pontos, tempoJogo, titleColor, musicavitoria);
+            TelaVitoria(customFont, vitoriaImage, pontos, tempoJogo, titleColor, musicavitoria, &music);
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                 gameStarted = false;
                 showingLevelButtons = false;
@@ -439,12 +450,16 @@ int main(void) {
                 loadingComplete = false;
                 paused = false;
                 vitoria = false;
+                musicaVitoriaTocando = false; // Parar a música quando sair da tela de vitória
                 vidas = 3;
                 pontos = 0;
                 perguntaAtual = 0;
                 respostaUsuario[0] = '\0';
                 tempoJogo = 0.0f;
                 tempoParado = false;
+                StopSound(musicavitoria); // Parar a música quando sair da tela de vitória
+                PlayMusicStream(music); // Retomar a música principal
+                respostaCerta = false; // Resetar a mensagem de resposta certa
             }
         } else {
             if (!gameStarted) {
@@ -544,10 +559,12 @@ int main(void) {
                         (selectedLevel == 3 && strcmp(respostaUsuario, questoesDificeis[perguntaAtual].resposta) == 0))) {
                         pontos += 10;
                         erro = false;
+                        respostaCerta = true; // Definir a mensagem de resposta certa
                         PlaySound(venceuSound); // Toca o som quando a resposta está correta
                     } else {
                         vidas -= 1;
                         erro = true;
+                        respostaCerta = false; // Limpar a mensagem de resposta certa em caso de erro
                         tempoErro = 0.0f;
                     }
                     perguntaAtual++;
